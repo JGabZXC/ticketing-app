@@ -1,0 +1,28 @@
+import express from "express";
+import morgan from "morgan";
+import mongoose from "mongoose";
+
+import AppError from "./utils/appError.js";
+import globalErrorHandler from "./controllers/errorController.mjs";
+
+import authRoutes from "./routes/authRoutes.mjs";
+
+const app = express();
+
+app.use(express.json());
+
+mongoose.set("id", false); // Disable id on all virtuals
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
+
+app.use("/api/v1/auth", authRoutes);
+
+app.use(/.*/, (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
+
+export default app;
