@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Ticket from "../models/Ticket.js";
 import catchAsync from "../utils/catchAsync.js";
 import Features from "../utils/Features.js";
 import AppError from "../utils/appError.js";
@@ -22,7 +23,7 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getuser = catchAsync(async (req, res, next) => {
+export const getUser = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const user = await User.findById(id);
 
@@ -71,5 +72,20 @@ export const updateUserAdmin = catchAsync(async (req, res, next) => {
     data: {
       user: updatedUser,
     },
+  });
+});
+
+export const deleteUserAdmin = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+
+  if (!user) return next(new AppError("No user found with that ID", 404));
+
+  await user.remove();
+  await Ticket.deleteMany({ createdBy: id });
+
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
 });

@@ -9,7 +9,7 @@ export const getAllTickets = catchAsync(async (req, res, next) => {
 
   const features = new Features(Ticket.find(filter), req.query).paginate();
   const query = features.query;
-  const totalTickets = await Ticket.countDocuments();
+  const totalTickets = await Ticket.countDocuments(filter);
   const totalPages = Math.ceil(totalTickets / (req.query.limit || 20));
 
   const tickets = await query;

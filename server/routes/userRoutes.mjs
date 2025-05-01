@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   getAllUsers,
+  getUser,
   updateUserAdmin,
 } from "../controllers/userController.mjs";
 import {
@@ -12,7 +13,7 @@ import ticketRoutes from "./ticketRoutes.mjs";
 
 const router = express.Router();
 
-router.use("/:userId/", ticketRoutes);
+router.use("/:userId/tickets", ticketRoutes);
 
 router
   .route("/")
@@ -20,11 +21,7 @@ router
 
 router
   .route("/:id")
-  .get(
-    isAuthenticated,
-    authorizedTo("agent", "admin", "superadmin"),
-    getAllUsers
-  )
+  .get(isAuthenticated, authorizedTo("agent", "admin", "superadmin"), getUser)
   .patch(isAuthenticated, authorizedTo("admin", "superadmin"), updateUserAdmin);
 
 export default router;
