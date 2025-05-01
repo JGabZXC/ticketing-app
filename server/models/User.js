@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { token } from "morgan";
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -87,6 +88,20 @@ userSchema.methods.checkPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(enteredPassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000);
+    return JWTTimestamp < changedTimestamp; // false means NOT changed
+  }
+};
+
+userSchema.methods.isTokenLatest = function (tokenDate) {
+  if (!this.validTokenDate) return false;
+  const tokenTimestamp = Math.floor(this.validTokenDate.getTime() / 1000);
+
+  return tokenDate < tokenTimestamp; // true means NOT latest
 };
 
 export default mongoose.model("User", userSchema);

@@ -37,7 +37,7 @@ export const login = catchAsync(async (req, res, next) => {
   if (!(await user.checkPassword(password, user.password)))
     return next(new AppError("Invalid username or password", 401));
 
-  await User.updateOne({ id: user._id }, { validTokenDate: new Date() });
+  await User.updateOne({ _id: user._id }, { validTokenDate: new Date() });
   createSendToken(user, 200, res);
 });
 

@@ -6,6 +6,7 @@ import AppError from "./utils/appError.js";
 import globalErrorHandler from "./controllers/errorController.mjs";
 
 import authRoutes from "./routes/authRoutes.mjs";
+import ticketRoutes from "./routes/ticketRoutes.mjs";
 
 const app = express();
 
@@ -18,6 +19,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/tickets", ticketRoutes);
 
 app.use(/.*/, (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
