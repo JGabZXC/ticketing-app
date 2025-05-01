@@ -13,8 +13,6 @@ const app = express();
 
 app.use(express.json());
 
-mongoose.set("id", false); // Disable id on all virtuals
-
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }

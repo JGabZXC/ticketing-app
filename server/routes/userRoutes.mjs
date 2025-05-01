@@ -8,8 +8,11 @@ import {
   isAuthenticated,
   authorizedTo,
 } from "../middlewares/authMiddleware.js";
+import ticketRoutes from "./ticketRoutes.mjs";
 
 const router = express.Router();
+
+router.use("/:userId/", ticketRoutes);
 
 router
   .route("/")
@@ -17,6 +20,11 @@ router
 
 router
   .route("/:id")
+  .get(
+    isAuthenticated,
+    authorizedTo("agent", "admin", "superadmin"),
+    getAllUsers
+  )
   .patch(isAuthenticated, authorizedTo("admin", "superadmin"), updateUserAdmin);
 
 export default router;
