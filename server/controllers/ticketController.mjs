@@ -155,15 +155,8 @@ export const deleteComment = catchAsync(async (req, res, next) => {
       new AppError("You are not authorized to perform this action", 403)
     );
 
-  if (isAdmin) {
-    ticket.comments.pull({ _id: commentId });
-    await ticket.save();
-  }
-
-  if (isCommentOwner) {
-    ticket.comments.pull({ _id: commentId });
-    await ticket.save();
-  }
+  ticket.comments.pull({ _id: commentId });
+  await ticket.save();
 
   return res.status(200).json({
     status: "success",
