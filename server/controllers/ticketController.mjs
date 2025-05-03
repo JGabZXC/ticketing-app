@@ -148,7 +148,7 @@ export const deleteComment = catchAsync(async (req, res, next) => {
   // this is for admin, agent and superadmin only
   if (!req.user.role.includes("user")) {
     // pull is for subdocument
-    comment.pull();
+    comment.pull({ _id: commentId });
     await ticket.save();
 
     return res.status(204).json({
@@ -159,7 +159,12 @@ export const deleteComment = catchAsync(async (req, res, next) => {
     });
   }
 
-  ticket.comments.pull({ _id: commentId });
+  if (req.user._id.toString() !== comment.postedBy.toString())
+    return next(
+      new AppError("You are not authorized to delete this comment", 403)
+    );
+
+  comment.pull({ _id: commentId });
   await ticket.save();
 
   return res.status(200).json({
