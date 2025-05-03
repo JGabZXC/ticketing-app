@@ -143,29 +143,27 @@ export const deleteComment = catchAsync(async (req, res, next) => {
   if (!ticket.comments.id(commentId))
     return next(new AppError("No comment found with that ID", 404));
 
-  const comment = ticket.comments.id(commentId);
+  const isAdmin = !req.user.role.includes("user");
+  const isCommentOwner = req.user._id.equals(
+    ticket.comments.id(commentId).postedBy
+  );
 
-  // this is for admin, agent and superadmin only
-  if (!req.user.role.includes("user")) {
-    // pull is for subdocument
-    comment.pull({ _id: commentId });
-    await ticket.save();
-
-    return res.status(204).json({
-      status: "success",
-      data: {
-        ticket,
-      },
-    });
-  }
-
-  if (req.user._id.toString() !== comment.postedBy.toString())
+  // if user is admin it will become true and then invert that to false making the condition to false and will exit the if statement, so does the isCommentOwner. If both are false then the condition will return false and then will be inverted to true making the condition met and will enter the if statement
+  console.log(!(isAdmin || isCommentOwner));
+  if (!(isAdmin || isCommentOwner))
     return next(
-      new AppError("You are not authorized to delete this comment", 403)
+      new AppError("You are not authorized to perform this action", 403)
     );
 
-  comment.pull({ _id: commentId });
-  await ticket.save();
+  if (isAdmin) {
+    ticket.comments.pull({ _id: commentId });
+    await ticket.save();
+  }
+
+  if (isCommentOwner) {
+    ticket.comments.pull({ _id: commentId });
+    await ticket.save();
+  }
 
   return res.status(200).json({
     status: "success",
