@@ -1,29 +1,7 @@
-import { promisify } from "util";
-import jwt from "jsonwebtoken";
-
 import User from "../models/User.js";
 import AppError from "../utils/appError.js";
 import catchAsync from "../utils/catchAsync.js";
-
-function signToken(id) {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-}
-
-function createSendToken(user, statusCode, res) {
-  const token = signToken(user._id);
-
-  user.password = undefined; // Remove password from the response
-
-  res.status(statusCode).json({
-    status: "success",
-    token,
-    data: {
-      user,
-    },
-  });
-}
+import createSendToken from "../utils/createSendToken.js";
 
 export const login = catchAsync(async (req, res, next) => {
   const { username, password } = req.body;

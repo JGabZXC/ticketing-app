@@ -3,6 +3,7 @@ import Ticket from "../models/Ticket.js";
 import catchAsync from "../utils/catchAsync.js";
 import Features from "../utils/Features.js";
 import AppError from "../utils/appError.js";
+import createSendToken from "../utils/createSendToken.js";
 
 export const getAllUsers = catchAsync(async (req, res, next) => {
   const features = new Features(User.find(), req.query).paginate();
@@ -88,4 +89,28 @@ export const deleteUserAdmin = catchAsync(async (req, res, next) => {
     status: "success",
     data: null,
   });
+});
+
+export const updateMe = catchAsync(async (req, res, next) => {
+  // This route already has the user object from the middleware
+  const user = await User.findById(req.user._id).select("+password");
+
+  const { currentPassword, password, confirmPassword } = req.body;
+
+  if (!currentPassword || !password || !confirmPassword)
+    return next(
+      new AppError(
+        "Please provide old password, new password and confirm password",
+        400
+      )
+    );
+
+  if (!(await user.checkPassword(currentPassword, user.password)))
+    return next(new AppError("Current password is incorrect", 401));
+
+  user.password = password;
+  user.confirmPassword = confirmPassword;
+  await user.save();
+
+  createSendToken(user, 200, res);
 });
