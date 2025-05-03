@@ -2,6 +2,7 @@ import Ticket from "../models/Ticket.js";
 import catchAsync from "../utils/catchAsync.js";
 import Features from "../utils/Features.js";
 import AppError from "../utils/appError.js";
+import { validateComment } from "../utils/validate.js";
 
 export const getAllTickets = catchAsync(async (req, res, next) => {
   const filter = {};
@@ -27,10 +28,15 @@ export const getAllTickets = catchAsync(async (req, res, next) => {
 
 export const getTicket = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const ticket = await Ticket.findById(id).populate({
-    path: "createdBy",
-    select: "username firstName lastName",
-  });
+  const ticket = await Ticket.findById(id)
+    .populate({
+      path: "createdBy",
+      select: "username firstName lastName",
+    })
+    .populate({
+      path: "assignedTo",
+      select: "username role firstName lastName",
+    });
 
   if (!ticket) return next(new AppError("No ticket found with that ID", 404));
 
@@ -48,13 +54,14 @@ export const updateTicket = catchAsync(async (req, res, next) => {
 
   if (!ticket) return next(new AppError("No ticket found with that ID", 404));
 
-  if (req.body.status) {
+  if (req.body.status || req.body.assignedTo) {
     if (req.user.role !== "agent")
       return next(
         new AppError("You are not authorized to perform this action", 403)
       );
-    req.body.updatedAt = Date.now();
   }
+
+  req.body.updatedAt = Date.now();
 
   const updatedTicket = await Ticket.findByIdAndUpdate(id, req.body, {
     new: true,
@@ -70,7 +77,7 @@ export const updateTicket = catchAsync(async (req, res, next) => {
 });
 
 export const postTicket = catchAsync(async (req, res, next) => {
-  req.body.createdBy = req.user.id;
+  req.body.createdBy = req.user._id;
 
   const newTicket = await Ticket.create(req.body);
 
@@ -78,6 +85,87 @@ export const postTicket = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       ticket: newTicket,
+    },
+  });
+});
+
+export const getComment = catchAsync(async (req, res, next) => {
+  const { ticketId } = req.params;
+
+  const ticket = await Ticket.findById(ticketId).populate({
+    path: "comments.postedBy",
+    select: "username firstName lastName",
+  });
+
+  if (!ticket) return next(new AppError("No ticket found with that ID", 404));
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      comments: ticket.comments,
+    },
+  });
+});
+
+export const postComment = catchAsync(async (req, res, next) => {
+  const { ticketId } = req.params;
+  const { comment } = req.body;
+  const ticket = await Ticket.findById(ticketId);
+
+  if (!ticket) return next(new AppError("No ticket found with that ID", 404));
+  if (!comment) return next(new AppError("Please provide a comment", 400));
+
+  const errorComment = validateComment(comment);
+
+  if (errorComment) return next(new AppError(errorComment, 400));
+
+  ticket.comments.push({
+    comment,
+    postedBy: req.user._id,
+  });
+
+  await ticket.save();
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      ticket,
+    },
+  });
+});
+
+export const deleteComment = catchAsync(async (req, res, next) => {
+  const { ticketId, commentId } = req.params;
+  const ticket = await Ticket.findById(ticketId);
+
+  if (!ticket) return next(new AppError("No ticket found with that ID", 404));
+
+  if (!ticket.comments.id(commentId))
+    return next(new AppError("No comment found with that ID", 404));
+
+  const comment = ticket.comments.id(commentId);
+
+  // this is for admin, agent and superadmin only
+  if (!req.user.role.includes("user")) {
+    // pull is for subdocument
+    comment.pull();
+    await ticket.save();
+
+    return res.status(204).json({
+      status: "success",
+      data: {
+        ticket,
+      },
+    });
+  }
+
+  ticket.comments.pull({ _id: commentId });
+  await ticket.save();
+
+  return res.status(200).json({
+    status: "success",
+    data: {
+      ticket,
     },
   });
 });

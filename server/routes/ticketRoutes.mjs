@@ -4,6 +4,9 @@ import {
   getTicket,
   updateTicket,
   postTicket,
+  getComment,
+  postComment,
+  deleteComment,
 } from "../controllers/ticketController.mjs";
 import {
   isAuthenticated,
@@ -21,5 +24,14 @@ router
   .route("/:id")
   .get(isAuthenticated, getTicket)
   .patch(isAuthenticated, updateTicket);
+
+router
+  .route("/:ticketId/comment")
+  .get(isAuthenticated, getComment)
+  .post(isAuthenticated, postComment);
+
+router
+  .route("/:ticketId/delete/:commentId")
+  .delete(isAuthenticated, deleteComment);
 
 export default router;
