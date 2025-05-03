@@ -89,6 +89,20 @@ export const postTicket = catchAsync(async (req, res, next) => {
   });
 });
 
+export const deleteTicket = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const ticket = await Ticket.findById(id);
+
+  if (!ticket) return next(new AppError("No ticket found with that ID", 404));
+
+  await Ticket.findByIdAndDelete(id);
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
 export const getComment = catchAsync(async (req, res, next) => {
   const { ticketId } = req.params;
 

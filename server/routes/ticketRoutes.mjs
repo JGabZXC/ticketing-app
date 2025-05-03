@@ -4,6 +4,7 @@ import {
   getTicket,
   updateTicket,
   postTicket,
+  deleteTicket,
   getComment,
   postComment,
   deleteComment,
@@ -23,7 +24,8 @@ router
 router
   .route("/:id")
   .get(isAuthenticated, getTicket)
-  .patch(isAuthenticated, updateTicket);
+  .patch(isAuthenticated, updateTicket)
+  .delete(isAuthenticated, authorizedTo("admin", "superadmin"), deleteTicket);
 
 router
   .route("/:ticketId/comment")
