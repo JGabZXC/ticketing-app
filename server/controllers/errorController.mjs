@@ -12,7 +12,10 @@ function handleValidationErrorDB(err) {
 }
 
 function handleJsonWebTokenError(err) {
-  return new AppError(`Invalid token: ${err.message}`, 401);
+  return new AppError(
+    `Invalid token: ${err.message}. Please log in again!`,
+    401
+  );
 }
 
 function handleTokenExpiredError(err) {

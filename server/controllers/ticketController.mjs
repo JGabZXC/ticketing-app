@@ -163,7 +163,6 @@ export const deleteComment = catchAsync(async (req, res, next) => {
   );
 
   // if user is admin it will become true and then invert that to false making the condition to false and will exit the if statement, so does the isCommentOwner. If both are false then the condition will return false and then will be inverted to true making the condition met and will enter the if statement
-  console.log(!(isAdmin || isCommentOwner));
   if (!(isAdmin || isCommentOwner))
     return next(
       new AppError("You are not authorized to perform this action", 403)

@@ -1,5 +1,9 @@
 import jwt from "jsonwebtoken";
 
+const cookieOptions = {
+  httpOnly: true,
+};
+
 function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -8,6 +12,22 @@ function signToken(id) {
 
 export default function createSendToken(user, statusCode, res) {
   const token = signToken(user._id);
+
+  /*
+  Setting the cookie expiration need to be set here because the JWT_COOKIE_EXPIRES is undefined if outside, because the process.env is not available at the moment of the server start, but only when the server is running and the env variables are loaded, so when calling login route all of the modules are loaded same with env variables so the JWT_COOKIE_EXPIRES is now available
+
+  try console logging the process.env.JWT_COOKIE_EXPIRES outside of this function and it will be undefined, but if you console log it inside the function it will be available because calling this function is inside the route handler and the env variables are loaded at that point
+
+  NOTE: Every .env variable are not loaded at the start of the server
+  */
+
+  cookieOptions.expires = new Date(
+    Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+  );
+
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+
+  res.cookie("jwt", token, cookieOptions);
 
   user.password = undefined; // Remove password from the response
 

@@ -5,12 +5,17 @@ import catchAsync from "../utils/catchAsync.js";
 import User from "../models/User.js";
 
 export const isAuthenticated = catchAsync(async (req, res, next) => {
-  let token;
+  let token = undefined;
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+
+    // This is to make sure that the token is not a string null
+    if (token === "null") token = null;
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   if (!token)
