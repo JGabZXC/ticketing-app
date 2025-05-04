@@ -2,9 +2,11 @@ import { useActionState, useContext } from "react";
 import Button from "./ui/button";
 import { validatePassword, validateUsername } from "../utils/validation";
 import AuthContext from "../store/AuthContext";
+import AppContext from "../store/AppContext";
 
 export default function Login() {
   const { login, isLoggedIn } = useContext(AuthContext);
+  const { setType } = useContext(AppContext);
   const [formState, formAction, isPending] = useActionState(loginAction, {
     error: null,
     enteredValues: {
@@ -29,6 +31,7 @@ export default function Login() {
 
     try {
       await login(username, password);
+      setType("home");
       return { error: {} };
     } catch (error) {
       return {

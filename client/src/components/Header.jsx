@@ -2,8 +2,11 @@ import { useContext } from "react";
 
 import Button from "./ui/button";
 import AppContext from "../store/AppContext";
+import AuthContext from "../store/AuthContext";
+
 export default function Header() {
   const { setType } = useContext(AppContext);
+  const { user, logout } = useContext(AuthContext);
 
   function handleHome() {
     setType("home");
@@ -16,6 +19,12 @@ export default function Header() {
   function handleLogin() {
     setType("login");
   }
+
+  function handleLogout() {
+    setType("home");
+    logout();
+  }
+
   return (
     <header className="flex justify-between p-2">
       <h1 className="text-2xl">Ticketing Request</h1>
@@ -31,9 +40,15 @@ export default function Header() {
           </Button>
         </li>
         <li>
-          <Button defaultButton onClick={handleLogin}>
-            Log in
-          </Button>
+          {user ? (
+            <Button defaultButton onClick={handleLogout}>
+              Log out
+            </Button>
+          ) : (
+            <Button defaultButton onClick={handleLogin}>
+              Log in
+            </Button>
+          )}
         </li>
       </ul>
     </header>

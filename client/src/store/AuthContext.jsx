@@ -12,9 +12,8 @@ export function AuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
 
   async function login(username, password) {
-    console.log("You are here");
     try {
-      const response = await fetch("http://127.0.0.1:3000/api/v1/auth/login", {
+      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,23 +39,24 @@ export function AuthContextProvider({ children }) {
 
   async function logout() {
     try {
-      const response = await fetch("http://127.0.0.1:3000/api/v1/auth/logout", {
+      // Note: Cookies are domain-specific, meaning the are set for a specific domain or subdomain. In this case, even though localhost and 127.0.0.1 both refer to your local machine, they are technically treated as different domains by the browser.
+
+      // Setting cooking 127.0.0.1:300 it is only availabe for that domain, but when accessing the same app on localhost, the cookie won't be sent with your requests because it's not scoped to the localhost domain.
+      const response = await fetch("http://localhost:3000/api/v1/auth/logout", {
         method: "GET",
         credentials: "include", // Include cookies in the request
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log(errorData);
         throw new Error(errorData.message || "Logout failed");
       }
 
       setIsLoggedIn(false);
       setUser(null);
     } catch (error) {
-      console.error(
-        "Logout failed:",
-        error.response?.data?.message || error.message
-      );
+      console.error("Logout failed:", error.message);
     }
   }
 

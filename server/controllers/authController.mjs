@@ -4,13 +4,7 @@ import catchAsync from "../utils/catchAsync.js";
 import createSendToken from "../utils/createSendToken.js";
 
 export const logout = catchAsync(async (req, res, next) => {
-  res.clearCookie("jwt", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
-    ),
-  });
+  res.clearCookie("jwt");
   res.status(200).json({
     status: "success",
     message: "Logged out successfully",

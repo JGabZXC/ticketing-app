@@ -1,9 +1,5 @@
 import jwt from "jsonwebtoken";
 
-const cookieOptions = {
-  httpOnly: true,
-};
-
 function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -21,11 +17,19 @@ export default function createSendToken(user, statusCode, res) {
   NOTE: Every .env variable are not loaded at the start of the server
   */
 
-  cookieOptions.expires = new Date(
-    Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
-  );
+  const cookieOptions = {
+    httpOnly: true,
+    secure: false,
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+    ),
+    sameSite: "Lax",
+  };
 
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.secure = true;
+    cookieOptions.sameSite = "None"; //'None' for cross-site cookies in production
+  }
 
   res.cookie("jwt", token, cookieOptions);
 
