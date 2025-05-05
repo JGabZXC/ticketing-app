@@ -26,8 +26,8 @@ export default function Header() {
   }
 
   return (
-    <header className="flex justify-between p-2">
-      <h1 className="text-2xl">Ticketing Request</h1>
+    <header className="flex justify-between p-2 font-medium">
+      <h1 className="text-2xl text-gray-900">Ticketing Request</h1>
       <ul className="flex gap-4 font-light text-lg">
         <li>
           <Button defaultButton onClick={handleHome}>

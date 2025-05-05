@@ -7,7 +7,7 @@ export default function Button({
 }) {
   if (defaultButton)
     className =
-      "cursor-pointer hover:text-slate-300 transition-colors duration-300";
+      "cursor-pointer text-gray-900 hover:text-gray-300 transition-colors duration-300 font-normal";
 
   return (
     <button className={className} disabled={disabled} {...props}>

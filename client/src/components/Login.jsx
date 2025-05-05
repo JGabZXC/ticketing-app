@@ -35,9 +35,7 @@ export default function Login() {
       return { error: {} };
     } catch (error) {
       return {
-        error: {
-          api: error.message,
-        },
+        error: { api: { message: error.message } },
         enteredValues: { username, password },
       };
     }
@@ -47,7 +45,7 @@ export default function Login() {
     <section className="max-w-md mx-auto mt-10">
       {isLoggedIn && <p>You are logged in</p>}
       {formState.error?.api && (
-        <p className="text-red-300">{formState.error.api}</p>
+        <p className="text-red-300">{formState.error.api.message}</p>
       )}
       <h1 className="text-2xl font-medium">Log in to Ticketing</h1>
       <form action={formAction} className="flex flex-col gap-4 mt-4">
