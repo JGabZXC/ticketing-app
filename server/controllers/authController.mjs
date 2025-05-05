@@ -48,3 +48,11 @@ export const register = catchAsync(async (req, res, next) => {
     data: user,
   });
 });
+
+// For react
+export const getMe = catchAsync(async (req, res, next) => {
+  res.status(200).json({
+    status: "success",
+    data: { user: req.user },
+  });
+});

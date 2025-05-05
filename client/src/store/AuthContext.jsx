@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
 const AuthContext = createContext({
   isLoggedIn: false,
@@ -10,6 +10,27 @@ const AuthContext = createContext({
 export function AuthContextProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function checkAuthStatus() {
+      try {
+        const response = await fetch("http://localhost:3000/api/v1/auth/me", {
+          credentials: "include", // Send cookie
+        });
+
+        if (!response.ok) throw new Error("Not authenticated");
+        const data = await response.json();
+        setUser(data.data.user);
+        setIsLoggedIn(true);
+      } catch (error) {
+        setIsLoggedIn(false);
+        setUser(null);
+        throw new Error(error.message);
+      }
+    }
+
+    checkAuthStatus();
+  }, []);
 
   async function login(username, password) {
     try {
