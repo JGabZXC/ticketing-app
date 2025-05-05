@@ -1,4 +1,4 @@
-import { useActionState, useContext } from "react";
+import { useActionState, useContext, useEffect, startTransition } from "react";
 import Button from "./ui/button";
 import { validatePassword, validateUsername } from "../utils/validation";
 import AuthContext from "../store/AuthContext";
@@ -17,6 +17,8 @@ export default function Login() {
   });
 
   async function loginAction(prevState, formData) {
+    if (!(formData instanceof FormData)) return formData;
+
     const { username, password } = Object.fromEntries(formData.entries());
 
     let error = {};
@@ -30,29 +32,41 @@ export default function Login() {
     if (Object.keys(error).length > 0)
       return { error, enteredValues: { username, password } };
 
-    try {
-      await login(username, password);
-      setType("home");
-      return { error: {} };
-    } catch (error) {
-      return {
-        error: { api: { message: error.message } },
-        enteredValues: { username, password },
-      };
-    }
+    await login(username, password);
+    return { error: null, enteredValues: { username, password } };
   }
 
   function handleRegister() {
     setType("register");
   }
 
+  console.log("i got rerender", isLoggedIn);
+  console.log("message", message);
+
+  useEffect(() => {
+    if (!message && isLoggedIn) {
+      const timeout = setTimeout(() => {
+        startTransition(() => {
+          formAction({ username: "", password: "" });
+          setType("home");
+        });
+      }, 2000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [message, isLoggedIn, setType, formAction]);
+
   return (
     <section className="max-w-md mx-auto mt-10">
-      {isLoggedIn && <p>You are logged in</p>}
-      {formState.error?.api && (
-        <p className="text-red-300">{formState.error.api.message}</p>
+      {isLoggedIn && (
+        <p className="text-green-300">You are already logged in!</p>
       )}
-      {message && <p className="text-green-300">{message}</p>}
+      {message && message.error && (
+        <p className="text-red-300">{message.error}</p>
+      )}
+      {message && message.success && (
+        <p className="text-green-300">{message.success}</p>
+      )}
       <h1 className="text-2xl font-medium text-slate-900">
         Log in to Ticketing
       </h1>

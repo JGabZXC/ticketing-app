@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import useHttp from "../hooks/useHttp";
 
 const AuthContext = createContext({
   isLoggedIn: false,
@@ -8,10 +9,35 @@ const AuthContext = createContext({
   user: null,
 });
 
+const configLogin = {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include", // Include cookies in the request
+};
+
+const configLogout = {
+  method: "GET",
+  credentials: "include",
+};
+
 export function AuthContextProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null);
+
+  const {
+    data: userData,
+    error: userError,
+    fetchData: sendLoginRequest,
+  } = useHttp("http://localhost:3000/api/v1/auth/login", configLogin, null);
+
+  // const { error: logoutError, fetchData: sendLogoutRequest } = useHttp(
+  //   "http://localhost:3000/api/v1/auth/logout",
+  //   configLogout,
+  //   user
+  // );
 
   useEffect(() => {
     async function checkAuthStatus() {
@@ -25,7 +51,7 @@ export function AuthContextProvider({ children }) {
         setUser(data.data.user);
         setIsLoggedIn(true);
       } catch (error) {
-        console.error("Error fetching cookies: ", error.message);
+        console.error("Error checking auth status:", error.message);
         setIsLoggedIn(false);
         setUser(null);
       }
@@ -34,25 +60,33 @@ export function AuthContextProvider({ children }) {
     checkAuthStatus();
   }, []);
 
-  async function login(username, password) {
-    setMessage(null);
-    const response = await fetch("http://localhost:3000/api/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies in the request
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Login failed");
+  useEffect(() => {
+    if (userError) {
+      setMessage(userError);
+      setIsLoggedIn(false);
     }
 
-    const data = await response.json();
-    setIsLoggedIn(true);
-    setUser(data.data.user);
+    if (userData) {
+      setUser(userData.data.user);
+      setIsLoggedIn(true);
+    }
+  }, [userData, userError]);
+
+  // useEffect(() => {
+  //   if (logoutError) {
+  //     setMessage(logoutError);
+  //   } else if (!logoutError) {
+  //     setIsLoggedIn(false);
+  //   }
+
+  //   if (!isLoggedIn) {
+  //     setUser(null);
+  //   }
+  // }, [logoutError, isLoggedIn]);
+
+  async function login(username, password) {
+    setMessage(null);
+    await sendLoginRequest({ username, password });
   }
 
   async function logout() {
