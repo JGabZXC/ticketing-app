@@ -4,12 +4,14 @@ const AuthContext = createContext({
   isLoggedIn: false,
   login: () => {},
   logout: () => {},
+  register: () => {},
   user: null,
 });
 
 export function AuthContextProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     async function checkAuthStatus() {
@@ -33,6 +35,7 @@ export function AuthContextProvider({ children }) {
   }, []);
 
   async function login(username, password) {
+    setMessage(null);
     const response = await fetch("http://localhost:3000/api/v1/auth/login", {
       method: "POST",
       headers: {
@@ -53,6 +56,7 @@ export function AuthContextProvider({ children }) {
   }
 
   async function logout() {
+    setMessage(null);
     // Note: Cookies are domain-specific, meaning they are set for a specific domain or subdomain. In this case, even though localhost and 127.0.0.1 both refer to your local machine, they are technically treated as different domains by the browser.
 
     // Setting cookies for 127.0.0.1:3000 makes them only available for that domain, but when accessing the same app on localhost, the cookie won't be sent with your requests because it's not scoped to the localhost domain.
@@ -63,7 +67,6 @@ export function AuthContextProvider({ children }) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(errorData);
       throw new Error(errorData.message || "Logout failed");
     }
 
@@ -71,11 +74,46 @@ export function AuthContextProvider({ children }) {
     setUser(null);
   }
 
+  async function register(
+    username,
+    email,
+    firstName,
+    lastName,
+    password,
+    confirmPassword
+  ) {
+    setMessage(null);
+    const response = await fetch("http://localhost:3000/api/v1/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies in the request
+      body: JSON.stringify({
+        username,
+        email,
+        firstName,
+        lastName,
+        password,
+        confirmPassword,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Registration failed");
+    }
+
+    setMessage("Registration successful! Please log in.");
+  }
+
   const contextValue = {
     isLoggedIn,
     login,
     logout,
+    register,
     user,
+    message,
   };
 
   return <AuthContext value={contextValue}>{children}</AuthContext>;

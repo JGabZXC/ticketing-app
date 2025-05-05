@@ -39,6 +39,11 @@ export default function Header() {
             Ticket
           </Button>
         </li>
+        {user ? (
+          <li>
+            <Button defaultButton>Me</Button>
+          </li>
+        ) : null}
         <li>
           {user ? (
             <Button defaultButton onClick={handleLogout}>

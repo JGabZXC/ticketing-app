@@ -1,10 +1,16 @@
 import { useContext } from "react";
 import AuthContext from "../store/AuthContext";
+import AppContext from "../store/AppContext";
 
 import Button from "./ui/button";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
+  const { setType } = useContext(AppContext);
+
+  function handleRegister() {
+    setType("register");
+  }
 
   if (user) {
     return (
@@ -34,7 +40,10 @@ export default function Home() {
         </h2>
       </div>
       <div className="text-sm flex gap-6 mt-10 justify-center">
-        <Button className="cursor-pointer px-4 py-2 rounded-md text-stone-100 bg-indigo-600 font-medium hover:bg-indigo-700 transition duration-200">
+        <Button
+          onClick={handleRegister}
+          className="cursor-pointer px-4 py-2 rounded-md text-stone-100 bg-indigo-600 font-medium hover:bg-indigo-700 transition duration-200"
+        >
           Get started
         </Button>
         <Button className="cursor-pointer text-gray-900 font-medium">

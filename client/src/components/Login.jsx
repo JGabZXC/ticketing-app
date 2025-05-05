@@ -3,9 +3,10 @@ import Button from "./ui/button";
 import { validatePassword, validateUsername } from "../utils/validation";
 import AuthContext from "../store/AuthContext";
 import AppContext from "../store/AppContext";
+import Input from "./ui/input";
 
 export default function Login() {
-  const { login, isLoggedIn } = useContext(AuthContext);
+  const { login, isLoggedIn, message } = useContext(AuthContext);
   const { setType } = useContext(AppContext);
   const [formState, formAction, isPending] = useActionState(loginAction, {
     error: null,
@@ -41,50 +42,58 @@ export default function Login() {
     }
   }
 
+  function handleRegister() {
+    setType("register");
+  }
+
   return (
     <section className="max-w-md mx-auto mt-10">
       {isLoggedIn && <p>You are logged in</p>}
       {formState.error?.api && (
         <p className="text-red-300">{formState.error.api.message}</p>
       )}
-      <h1 className="text-2xl font-medium">Log in to Ticketing</h1>
+      {message && <p className="text-green-300">{message}</p>}
+      <h1 className="text-2xl font-medium text-slate-900">
+        Log in to Ticketing
+      </h1>
       <form action={formAction} className="flex flex-col gap-4 mt-4">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="username">Username or Email</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            className="border-2 border-slate-400 p-1 rounded-md"
-            defaultValue={formState.enteredValues?.username || ""}
-          />
-          {formState?.error?.username && (
-            <p className="text-red-300 text-sm">{formState.error.username}</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            className="border-2 border-slate-400 p-1 rounded-md"
-            defaultValue={formState.enteredValues?.password || ""}
-          />
-          {formState?.error?.password && (
-            <p className="text-red-300 text-sm">{formState.error.password}</p>
-          )}
-        </div>
-        <div className="text-end">
-          <Button
-            type="submit"
-            disabled={isPending || isLoggedIn}
-            className="px-4 py-2 cursor-pointer bg-indigo-600 text-slate-50 rounded-md hover:bg-indigo-700 transition-colors duration-200"
-          >
-            {isPending ? "Loggin in..." : "Log in"}
-          </Button>
-        </div>
+        <Input
+          labelText="Username or Email"
+          id="username"
+          name="username"
+          type="text"
+          className="border-2 border-gray-400 p-1 rounded-md"
+          defaultValue={formState.enteredValues?.username || ""}
+          error={formState?.error?.username}
+        />
+        <Input
+          labelText="Password"
+          type="password"
+          id="password"
+          name="password"
+          className="border-2 border-slate-400 p-1 rounded-md"
+          defaultValue={formState.enteredValues?.password || ""}
+          error={formState?.error?.password}
+        />
+        <Button
+          type="submit"
+          disabled={isPending || isLoggedIn}
+          className="px-4 py-2 cursor-pointer bg-indigo-600 text-slate-50 rounded-md hover:bg-indigo-700 transition-colors duration-200"
+        >
+          {isPending ? "Loggin in..." : "Log in"}
+        </Button>
       </form>
+      <div className="mt-4">
+        <p>
+          Don't have an account?{" "}
+          <button
+            className="cursor-pointer font-medium underline"
+            onClick={handleRegister}
+          >
+            Register here
+          </button>
+        </p>
+      </div>
     </section>
   );
 }
