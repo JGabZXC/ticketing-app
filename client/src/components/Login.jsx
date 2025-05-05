@@ -81,7 +81,7 @@ export default function Login() {
           <Button
             type="submit"
             disabled={isPending || isLoggedIn}
-            className="px-4 py-2 cursor-pointer bg-slate-400 text-slate-50 rounded-md hover:bg-slate-600 transition-colors duration-300"
+            className="px-4 py-2 cursor-pointer bg-indigo-600 text-slate-50 rounded-md hover:bg-indigo-700 transition-colors duration-200"
           >
             {isPending ? "Loggin in..." : "Log in"}
           </Button>

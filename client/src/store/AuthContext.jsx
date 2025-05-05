@@ -88,7 +88,9 @@ export function AuthContextProvider({ children }) {
     user,
   };
 
-  return <AuthContext value={contextValue}>{children}</AuthContext>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 }
 
 export default AuthContext;
