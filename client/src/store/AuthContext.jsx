@@ -22,10 +22,20 @@ const configLogout = {
   credentials: "include",
 };
 
+const configRegister = {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include", // Include cookies in the request
+};
+
 export function AuthContextProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const {
     data: userData,
@@ -33,11 +43,21 @@ export function AuthContextProvider({ children }) {
     fetchData: sendLoginRequest,
   } = useHttp("http://localhost:3000/api/v1/auth/login", configLogin, null);
 
-  // const { error: logoutError, fetchData: sendLogoutRequest } = useHttp(
-  //   "http://localhost:3000/api/v1/auth/logout",
-  //   configLogout,
-  //   user
-  // );
+  const { error: logoutError, fetchData: sendLogoutRequest } = useHttp(
+    "http://localhost:3000/api/v1/auth/logout",
+    configLogout,
+    user
+  );
+
+  const {
+    error: registerError,
+    loading: registerLoading,
+    fetchData: sendRegisterRequest,
+  } = useHttp(
+    "http://localhost:3000/api/v1/auth/register",
+    configRegister,
+    null
+  );
 
   useEffect(() => {
     async function checkAuthStatus() {
@@ -62,27 +82,41 @@ export function AuthContextProvider({ children }) {
 
   useEffect(() => {
     if (userError) {
-      setMessage(userError);
+      setMessage({ userError });
       setIsLoggedIn(false);
     }
 
     if (userData) {
       setUser(userData.data.user);
+      setMessage(null);
       setIsLoggedIn(true);
     }
   }, [userData, userError]);
 
-  // useEffect(() => {
-  //   if (logoutError) {
-  //     setMessage(logoutError);
-  //   } else if (!logoutError) {
-  //     setIsLoggedIn(false);
-  //   }
+  useEffect(() => {
+    if (isLoggingOut) {
+      if (logoutError) {
+        setMessage({ logoutError });
+        setIsLoggingOut(false);
+      } else {
+        setUser(null);
+        setIsLoggedIn(false);
+        setIsLoggingOut(false);
+      }
+    }
+  }, [logoutError, isLoggedIn, isLoggingOut]);
 
-  //   if (!isLoggedIn) {
-  //     setUser(null);
-  //   }
-  // }, [logoutError, isLoggedIn]);
+  useEffect(() => {
+    if (isRegistering) {
+      if (registerError) {
+        setMessage({ registerError });
+        setIsRegistering(false);
+      } else if (!registerError && !registerLoading) {
+        setMessage({ success: "Registration successful! Please log in." });
+        setIsRegistering(false);
+      }
+    }
+  }, [registerError, isRegistering, registerLoading]);
 
   async function login(username, password) {
     setMessage(null);
@@ -91,21 +125,8 @@ export function AuthContextProvider({ children }) {
 
   async function logout() {
     setMessage(null);
-    // Note: Cookies are domain-specific, meaning they are set for a specific domain or subdomain. In this case, even though localhost and 127.0.0.1 both refer to your local machine, they are technically treated as different domains by the browser.
-
-    // Setting cookies for 127.0.0.1:3000 makes them only available for that domain, but when accessing the same app on localhost, the cookie won't be sent with your requests because it's not scoped to the localhost domain.
-    const response = await fetch("http://localhost:3000/api/v1/auth/logout", {
-      method: "GET",
-      credentials: "include", // Include cookies in the request
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Logout failed");
-    }
-
-    setIsLoggedIn(false);
-    setUser(null);
+    setIsLoggingOut(true);
+    await sendLogoutRequest();
   }
 
   async function register(
@@ -116,30 +137,50 @@ export function AuthContextProvider({ children }) {
     password,
     confirmPassword
   ) {
+    setIsRegistering(true);
     setMessage(null);
-    const response = await fetch("http://localhost:3000/api/v1/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies in the request
-      body: JSON.stringify({
-        username,
-        email,
-        firstName,
-        lastName,
-        password,
-        confirmPassword,
-      }),
+    sendRegisterRequest({
+      username,
+      email,
+      firstName,
+      lastName,
+      password,
+      confirmPassword,
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Registration failed");
-    }
-
-    setMessage("Registration successful! Please log in.");
   }
+
+  // async function register(
+  //   username,
+  //   email,
+  //   firstName,
+  //   lastName,
+  //   password,
+  //   confirmPassword
+  // ) {
+  //   setMessage(null);
+  //   const response = await fetch("http://localhost:3000/api/v1/auth/register", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     credentials: "include", // Include cookies in the request
+  //     body: JSON.stringify({
+  //       username,
+  //       email,
+  //       firstName,
+  //       lastName,
+  //       password,
+  //       confirmPassword,
+  //     }),
+  //   });
+
+  //   if (!response.ok) {
+  //     const errorData = await response.json();
+  //     throw new Error(errorData.message || "Registration failed");
+  //   }
+
+  //   setMessage({ success: "Registration successful! Please log in." });
+  // }
 
   const contextValue = {
     isLoggedIn,

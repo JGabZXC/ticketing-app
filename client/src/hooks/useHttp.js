@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 export default function useHttp(url, config, initialData) {
   const [data, setData] = useState(initialData);
@@ -9,6 +9,7 @@ export default function useHttp(url, config, initialData) {
     async function fetchData(body) {
       setLoading(true);
       try {
+        setError(null);
         if (body) config.body = JSON.stringify(body);
         const response = await fetch(url, config);
 
@@ -28,9 +29,9 @@ export default function useHttp(url, config, initialData) {
     [config, url]
   );
 
-  useEffect(() => {
-    if (config && config.method === "GET") fetchData();
-  }, [config, fetchData]);
+  // useEffect(() => {
+  //   if (config && config.method === "GET") fetchData();
+  // }, [config, fetchData]);
 
   return {
     data,

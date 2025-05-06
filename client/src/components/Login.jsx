@@ -40,11 +40,8 @@ export default function Login() {
     setType("register");
   }
 
-  console.log("i got rerender", isLoggedIn);
-  console.log("message", message);
-
   useEffect(() => {
-    if (!message && isLoggedIn) {
+    if (!message?.userError && isLoggedIn) {
       const timeout = setTimeout(() => {
         startTransition(() => {
           formAction({ username: "", password: "" });
@@ -54,15 +51,13 @@ export default function Login() {
 
       return () => clearTimeout(timeout);
     }
-  }, [message, isLoggedIn, setType, formAction]);
+  }, [message?.userError, isLoggedIn, setType, formAction]);
 
   return (
     <section className="max-w-md mx-auto mt-10">
-      {isLoggedIn && (
-        <p className="text-green-300">You are already logged in!</p>
-      )}
-      {message && message.error && (
-        <p className="text-red-300">{message.error}</p>
+      {isLoggedIn && <p className="text-green-300">Successfull logged in!</p>}
+      {message && message?.userError && (
+        <p className="text-red-300">{message.userError.error}</p>
       )}
       {message && message.success && (
         <p className="text-green-300">{message.success}</p>
