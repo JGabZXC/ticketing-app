@@ -6,7 +6,7 @@ import AuthContext from "../store/AuthContext";
 
 export default function Header() {
   const { setType } = useContext(AppContext);
-  const { user, logout } = useContext(AuthContext);
+  const { user, Logout } = useContext(AuthContext);
 
   function handleHome() {
     setType("home");
@@ -22,7 +22,7 @@ export default function Header() {
 
   function handleLogout() {
     setType("home");
-    logout();
+    Logout();
   }
 
   return (

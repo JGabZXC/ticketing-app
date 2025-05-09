@@ -1,4 +1,4 @@
-import { useActionState, useContext, useEffect, startTransition } from "react";
+import { useActionState, useContext, startTransition, useEffect } from "react";
 import Button from "./ui/button";
 import { validatePassword, validateUsername } from "../utils/validation";
 import AuthContext from "../store/AuthContext";
@@ -6,7 +6,7 @@ import AppContext from "../store/AppContext";
 import Input from "./ui/input";
 
 export default function Login() {
-  const { login, isLoggedIn, message } = useContext(AuthContext);
+  const { Login, message } = useContext(AuthContext);
   const { setType } = useContext(AppContext);
   const [formState, formAction, isPending] = useActionState(loginAction, {
     error: null,
@@ -32,7 +32,7 @@ export default function Login() {
     if (Object.keys(error).length > 0)
       return { error, enteredValues: { username, password } };
 
-    await login(username, password);
+    await Login(username, password);
     return { error: null, enteredValues: { username, password } };
   }
 
@@ -41,26 +41,25 @@ export default function Login() {
   }
 
   useEffect(() => {
-    if (!message?.userError && isLoggedIn) {
-      const timeout = setTimeout(() => {
+    if (message?.authSuccess) {
+      const timer = setTimeout(() => {
         startTransition(() => {
           formAction({ username: "", password: "" });
           setType("home");
         });
       }, 2000);
 
-      return () => clearTimeout(timeout);
+      return () => clearTimeout(timer);
     }
-  }, [message?.userError, isLoggedIn, setType, formAction]);
+  }, [message?.authSuccess, setType, formAction]);
 
   return (
     <section className="max-w-md mx-auto mt-10">
-      {isLoggedIn && <p className="text-green-300">Successfull logged in!</p>}
-      {message && message?.userError && (
-        <p className="text-red-300">{message.userError.error}</p>
+      {message?.authError && (
+        <p className="text-red-300">{message.authError}</p>
       )}
-      {message && message.success && (
-        <p className="text-green-300">{message.success}</p>
+      {message?.authSuccess && (
+        <p className="text-green-300">{message.authSuccess}</p>
       )}
       <h1 className="text-2xl font-medium text-slate-900">
         Log in to Ticketing
@@ -86,7 +85,7 @@ export default function Login() {
         />
         <Button
           type="submit"
-          disabled={isPending || isLoggedIn}
+          disabled={isPending}
           className="px-4 py-2 cursor-pointer bg-indigo-600 text-slate-50 rounded-md hover:bg-indigo-700 transition-colors duration-200"
         >
           {isPending ? "Loggin in..." : "Log in"}

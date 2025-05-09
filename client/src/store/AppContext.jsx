@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useContext } from "react";
+import AuthContext from "./AuthContext";
 
 const AppContext = createContext({
   type: "home",
@@ -6,9 +7,11 @@ const AppContext = createContext({
 });
 
 export function AppContextProvider({ children }) {
+  const { setMessage } = useContext(AuthContext);
   const [type, setType] = useState("home");
 
   function setTypeHandler(newType) {
+    setMessage(undefined);
     setType(newType);
   }
 
