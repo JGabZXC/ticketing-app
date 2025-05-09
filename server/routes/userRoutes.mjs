@@ -4,6 +4,7 @@ import {
   getAllUsers,
   getUser,
   updateUserAdmin,
+  updateMyPassword,
   updateMe,
 } from "../controllers/userController.mjs";
 import {
@@ -25,6 +26,7 @@ router
   .get(isAuthenticated, authorizedTo("agent", "admin", "superadmin"), getUser)
   .patch(isAuthenticated, authorizedTo("admin", "superadmin"), updateUserAdmin);
 
-router.route("/me/password/:id").patch(isAuthenticated, updateMe);
+router.route("/me/password").patch(isAuthenticated, updateMyPassword);
+router.route("/me/update").patch(isAuthenticated, updateMe);
 
 export default router;

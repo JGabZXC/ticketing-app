@@ -106,7 +106,7 @@ export default function Register() {
 
       return () => clearTimeout(timeout);
     }
-  }, [message, setType]);
+  }, [message, setType, formAction]);
 
   function handleLogin() {
     setType("login");

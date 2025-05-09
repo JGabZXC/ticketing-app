@@ -91,7 +91,7 @@ export const deleteUserAdmin = catchAsync(async (req, res, next) => {
   });
 });
 
-export const updateMe = catchAsync(async (req, res, next) => {
+export const updateMyPassword = catchAsync(async (req, res, next) => {
   // This route already has the user object from the middleware
   const user = await User.findById(req.user._id).select("+password");
 
@@ -111,6 +111,31 @@ export const updateMe = catchAsync(async (req, res, next) => {
   user.password = password;
   user.confirmPassword = confirmPassword;
   await user.save();
+
+  createSendToken(user, 200, res);
+});
+
+export const updateMe = catchAsync(async (req, res, next) => {
+  const excludedFields = [
+    "password",
+    "confirmPassword",
+    "role",
+    "validTokenDate",
+    "passwordChangedAt",
+  ];
+  excludedFields.forEach((el) => delete req.body[el]);
+
+  if (!req.body.email) delete req.body.email;
+  if (!req.body.username) delete req.body.username;
+  if (!req.body.firstName) delete req.body.firstName;
+  if (!req.body.lastName) delete req.body.lastName;
+
+  console.log(req.body);
+
+  const user = await User.findByIdAndUpdate(req.user._id, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
   createSendToken(user, 200, res);
 });

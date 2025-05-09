@@ -6,7 +6,7 @@ import AppContext from "../store/AppContext";
 import Input from "./ui/input";
 
 export default function Login() {
-  const { Login, message } = useContext(AuthContext);
+  const { Login, isAuthenticated, message } = useContext(AuthContext);
   const { setType } = useContext(AppContext);
   const [formState, formAction, isPending] = useActionState(loginAction, {
     error: null,
@@ -56,10 +56,10 @@ export default function Login() {
   return (
     <section className="max-w-md mx-auto mt-10">
       {message?.authError && (
-        <p className="text-red-300">{message.authError}</p>
+        <p className="text-red-300 text-center">{message.authError}</p>
       )}
       {message?.authSuccess && (
-        <p className="text-green-300">{message.authSuccess}</p>
+        <p className="text-green-300 text-center">{message.authSuccess}</p>
       )}
       <h1 className="text-2xl font-medium text-slate-900">
         Log in to Ticketing
@@ -85,7 +85,7 @@ export default function Login() {
         />
         <Button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || isAuthenticated}
           className="px-4 py-2 cursor-pointer bg-indigo-600 text-slate-50 rounded-md hover:bg-indigo-700 transition-colors duration-200"
         >
           {isPending ? "Loggin in..." : "Log in"}

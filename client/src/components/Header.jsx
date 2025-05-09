@@ -20,6 +20,10 @@ export default function Header() {
     setType("login");
   }
 
+  function handleMe() {
+    setType("me");
+  }
+
   function handleLogout() {
     setType("home");
     Logout();
@@ -41,7 +45,9 @@ export default function Header() {
         </li>
         {user ? (
           <li>
-            <Button defaultButton>Me</Button>
+            <Button defaultButton onClick={handleMe}>
+              Me
+            </Button>
           </li>
         ) : null}
         <li>

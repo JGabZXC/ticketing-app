@@ -1,4 +1,5 @@
 import { createContext, useReducer, useState, useEffect } from "react";
+import { updateProfileAction } from "../utils/actions";
 
 const AuthContext = createContext({
   user: null,
@@ -42,7 +43,8 @@ export function AuthContextProvider({ children }) {
         credentials: "include", // Send cookie
       });
 
-      if (!response.ok) throw new Error("Not authenticated");
+      if (!response.ok) return;
+
       const data = await response.json();
       dispatchUserAction({
         type: "LOGIN",
@@ -73,7 +75,9 @@ export function AuthContextProvider({ children }) {
       }
 
       const data = await response.json();
-      setMessage({ authSuccess: "Login successful!" });
+      setMessage({
+        authSuccess: "Login successful! You will be redirected to home.",
+      });
       dispatchUserAction({
         type: "LOGIN",
         payload: {
@@ -103,7 +107,26 @@ export function AuthContextProvider({ children }) {
       });
     } catch (error) {
       setMessage({ authError: error.message });
+      dispatchUserAction({
+        type: "LOGOUT",
+      });
     }
+  }
+
+  async function updateProfile(formData) {
+    const result = await updateProfileAction(formData);
+
+    if (result.success) {
+      setMessage({ authSuccess: result.message });
+      dispatchUserAction({
+        type: "LOGIN",
+        payload: {
+          user: result.user,
+        },
+      });
+    }
+
+    setMessage({ updateMessage: result.message });
   }
 
   const contextValue = {
@@ -113,6 +136,7 @@ export function AuthContextProvider({ children }) {
     setMessage,
     Login,
     Logout,
+    updateProfile,
   };
 
   return <AuthContext value={contextValue}>{children}</AuthContext>;

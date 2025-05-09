@@ -5,7 +5,7 @@ import AppContext from "../store/AppContext";
 import Button from "./ui/button";
 
 export default function Home() {
-  const { user } = useContext(AuthContext);
+  const { user, message } = useContext(AuthContext);
   const { setType } = useContext(AppContext);
 
   function handleRegister() {
@@ -31,6 +31,7 @@ export default function Home() {
       </section>
     );
   }
+
   return (
     <section className="p-2 mt-20 max-w-1/2 mx-auto text-center">
       <div>
@@ -38,6 +39,11 @@ export default function Home() {
         <h2 className="text-lg font-medium text-gray-600 mt-10">
           Submit a ticket, wait for the reply, then check for the solved answer!
         </h2>
+        {message?.authError && (
+          <p className="text-red-500 text-sm font-medium">
+            {message.authError}
+          </p>
+        )}
       </div>
       <div className="text-sm flex gap-6 mt-10 justify-center">
         <Button
