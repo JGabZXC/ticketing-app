@@ -8,13 +8,20 @@ export const getAllTickets = catchAsync(async (req, res, next) => {
   const filter = {};
   if (req.params.userId) filter.createdBy = req.params.userId;
 
-  const features = new Features(Ticket.find(filter), req.query).paginate();
+  const features = new Features(Ticket.find(filter), req.query)
+    .paginate()
+    .sort();
   const query = features.query;
   const totalTickets = await Ticket.countDocuments(filter);
   const totalPages = Math.ceil(totalTickets / (req.query.limit || 20));
 
   const tickets = await query;
-
+  console.log({
+    status: "success",
+    results: tickets.length,
+    totalTickets,
+    totalPages,
+  });
   res.status(200).json({
     status: "success",
     results: tickets.length,

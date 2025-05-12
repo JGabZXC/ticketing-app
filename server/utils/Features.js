@@ -12,6 +12,16 @@ class Features {
     this.query = this.query.skip(skip).limit(limit);
     return this;
   }
+
+  sort() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(",").join(" ");
+      this.query = this.query.sort(sortBy);
+    } else {
+      this.query = this.query.sort("-createdAt");
+    }
+    return this;
+  }
 }
 
 export default Features;

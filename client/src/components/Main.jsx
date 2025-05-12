@@ -5,6 +5,8 @@ import Login from "./Login";
 import Home from "./Home";
 import Register from "./Register";
 import Me from "./Me";
+import Ticket from "./Ticket/Ticket";
+import CreateTicket from "./Ticket/CreateTicket";
 
 export default function Main() {
   const { type } = useContext(AppContext);
@@ -21,6 +23,14 @@ export default function Main() {
 
   if (type === "me") {
     content = <Me />;
+  }
+
+  if (type === "ticket") {
+    content = <Ticket />;
+  }
+
+  if (type === "createTicket") {
+    content = <CreateTicket />;
   }
 
   return <main className="font-poppins">{content}</main>;
