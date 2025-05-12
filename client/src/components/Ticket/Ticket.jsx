@@ -12,6 +12,8 @@ export default function Ticket() {
   const [isCreating, setIsCreating] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState("-createdAt");
+  const [showOnly, setShowOnly] = useState(20);
 
   // Fetch tickets from the server
   useEffect(() => {
@@ -19,7 +21,7 @@ export default function Ticket() {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:3000/api/v1/tickets?page=${currentPage}`
+          `http://localhost:3000/api/v1/tickets?page=${currentPage}&limit=${showOnly}&sort=${sortBy}`
         );
 
         if (!response.ok) {
@@ -36,7 +38,7 @@ export default function Ticket() {
       }
     }
     fetchTickets();
-  }, [currentPage]);
+  }, [currentPage, showOnly, sortBy]);
 
   useEffect(() => {
     if (error) {
@@ -131,13 +133,52 @@ export default function Ticket() {
         />
       ) : (
         <>
-          <Button
-            type="button"
-            className="cursor-pointer my-2 py-2 px-4 rounded-md text-stone-100 bg-indigo-600 hover:bg-indigo-700 transition duration-200 font-medium"
-            onClick={() => setIsCreating(true)}
-          >
-            Create Ticket
-          </Button>
+          <div className="flex justify-between items-center">
+            <div>
+              <Button
+                type="button"
+                className="cursor-pointer my-2 py-2 px-4 rounded-md text-stone-100 bg-indigo-600 hover:bg-indigo-700 transition duration-200 font-medium"
+                onClick={() => setIsCreating(true)}
+              >
+                Create Ticket
+              </Button>
+            </div>
+            <div className="flex justify-end">
+              <div className="flex items-center">
+                <label
+                  htmlFor="sortBy"
+                  className="text-slate-900 text-sm w-full"
+                >
+                  Sort By
+                </label>
+                <select
+                  name="sortBy"
+                  id="sortBy"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="-createdAt">Newest</option>
+                  <option value="createdAt">Oldest</option>
+                </select>
+              </div>
+              <div className="flex items-center">
+                <label htmlFor="showOnly" className="text-slate-900 text-sm">
+                  Show Tickets
+                </label>
+                <select
+                  name="showOnly"
+                  id="showOnly"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  onChange={(e) => setShowOnly(e.target.value)}
+                >
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {tickets.length > 0 ? (
               tickets.map((ticket) => (

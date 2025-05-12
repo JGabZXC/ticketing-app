@@ -13,6 +13,7 @@ export default function CardTicket({ ticket }) {
     <div className={classes}>
       <h2 className="text-xl font-bold text-gray-700 break-all">
         {ticket.title.slice(0, 20)}
+        {ticket.title.length > 20 ? "..." : undefined}
       </h2>
       <p className="text-gray-500 mt-2">{ticket.description.slice(0, 50)}</p>
       <div className="flex justify-between items-center mt-4">

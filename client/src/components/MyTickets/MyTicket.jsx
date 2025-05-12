@@ -35,7 +35,7 @@ export default function MyTicket() {
       }
     }
     fetchTickets();
-  }, [currentPage]);
+  }, [currentPage, user._id]);
 
   useEffect(() => {
     if (error) {
