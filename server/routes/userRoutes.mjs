@@ -3,6 +3,7 @@ import express from "express";
 import {
   getAllUsers,
   getUser,
+  deleteUserAdmin,
   updateUserAdmin,
   updateMyPassword,
   updateMe,
@@ -24,7 +25,12 @@ router
 router
   .route("/:id")
   .get(isAuthenticated, authorizedTo("agent", "admin", "superadmin"), getUser)
-  .patch(isAuthenticated, authorizedTo("admin", "superadmin"), updateUserAdmin);
+  .patch(isAuthenticated, authorizedTo("admin", "superadmin"), updateUserAdmin)
+  .delete(
+    isAuthenticated,
+    authorizedTo("admin", "superadmin"),
+    deleteUserAdmin
+  );
 
 router.route("/me/password").patch(isAuthenticated, updateMyPassword);
 router.route("/me/update").patch(isAuthenticated, updateMe);

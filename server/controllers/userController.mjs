@@ -80,9 +80,14 @@ export const deleteUserAdmin = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const user = await User.findById(id);
 
+  if (req.user.role === "admin" && user.role === "superadmin")
+    return next(
+      new AppError("You are not authorized to perform this action", 403)
+    );
+
   if (!user) return next(new AppError("No user found with that ID", 404));
 
-  await user.remove();
+  await User.findByIdAndDelete(id);
   await Ticket.deleteMany({ createdBy: id });
 
   res.status(204).json({

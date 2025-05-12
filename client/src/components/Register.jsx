@@ -28,8 +28,6 @@ export default function Register() {
     error: null,
   });
 
-  console.log(message);
-
   async function registerAction(prevState, formData) {
     if (!(formData instanceof FormData)) return formData;
     const { username, email, firstName, lastName, password, confirmPassword } =
