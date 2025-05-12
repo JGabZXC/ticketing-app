@@ -1,11 +1,18 @@
+import { useState } from "react";
+
 import Input from "../ui/input";
 import Button from "../ui/button";
 
 export default function CreateTicket({ onCancel, onCreate }) {
+  const [loading, setLoading] = useState(false);
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    onCreate(formData); // Pass form data to the parent component
+    try {
+      onCreate(formData); // Pass form data to the parent component
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -19,14 +26,16 @@ export default function CreateTicket({ onCancel, onCreate }) {
           placeholder="Enter ticket title"
           className="w-full p-2 border border-gray-300 rounded-md"
         />
-        <Input
-          labelText="Description"
-          type="text"
-          id="description"
-          name="description"
-          placeholder="Enter ticket description"
-          className="w-full p-2 border border-gray-300 rounded-md"
-        />
+        <div className="flex flex-col gap-2">
+          <label htmlFor="description" className="text-slate-900 text-sm">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            className="w-full p-2 border border-gray-300 rounded-md resize-none"
+          />
+        </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="priority" className="text-slate-900 text-sm">
             Priority
@@ -52,6 +61,7 @@ export default function CreateTicket({ onCancel, onCreate }) {
           <Button
             type="submit"
             className="cursor-pointer py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
+            disabled={loading}
           >
             Create
           </Button>

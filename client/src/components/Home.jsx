@@ -12,6 +12,10 @@ export default function Home() {
     setType("register");
   }
 
+  function handleViewTicket() {
+    setType("ticket");
+  }
+
   if (user) {
     return (
       <section className="p-2 mt-20 md:max-w-1/2 mx-auto text-center sm:w-full">
@@ -24,8 +28,11 @@ export default function Home() {
           </h2>
         </div>
         <div className="text-sm text-center mt-10">
-          <Button className="cursor-pointer px-4 py-2 rounded-md text-stone-100 bg-indigo-600 hover:bg-indigo-700 transition duration-200 font-medium">
-            Create Ticket
+          <Button
+            className="cursor-pointer px-4 py-2 rounded-md text-stone-100 bg-indigo-600 hover:bg-indigo-700 transition duration-200 font-medium"
+            onClick={handleViewTicket}
+          >
+            View Ticket
           </Button>
         </div>
       </section>

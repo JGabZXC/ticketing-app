@@ -11,12 +11,14 @@ export default function CardTicket({ ticket }) {
 
   return (
     <div className={classes}>
-      <h2 className="text-xl font-bold text-indigo-600">{ticket.title}</h2>
-      <p className="text-gray-600 mt-2">{ticket.description}</p>
+      <h2 className="text-xl font-bold text-gray-700 break-all">
+        {ticket.title.slice(0, 20)}
+      </h2>
+      <p className="text-gray-500 mt-2">{ticket.description.slice(0, 50)}</p>
       <div className="flex justify-between items-center mt-4">
         <span
           className={`px-3 py-1 rounded-full text-sm font-medium ${
-            ticket.status === "open"
+            ticket.status === "open" || ticket.status === "in-progress"
               ? "bg-green-100 text-green-600"
               : "bg-red-100 text-red-600"
           }`}
@@ -24,7 +26,14 @@ export default function CardTicket({ ticket }) {
           {ticket.status}
         </span>
         <span className="text-gray-500 text-sm">
-          Created: {new Date(ticket.createdAt).toLocaleDateString()}
+          Created:{" "}
+          {new Date(ticket.createdAt).toLocaleString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </span>
       </div>
     </div>
