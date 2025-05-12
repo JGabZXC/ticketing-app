@@ -35,6 +35,11 @@ export default function Header() {
     Logout();
   }
 
+  function handleMyTicket() {
+    setType("myTicket");
+    setIsMenuOpen(false);
+  }
+
   return (
     <header className="flex justify-between items-center p-4 bg-white shadow-md">
       {/* Logo */}
@@ -80,7 +85,9 @@ export default function Header() {
         {user ? (
           <>
             <li>
-              <Button defaultButton>My Tickets</Button>
+              <Button defaultButton onClick={handleMyTicket}>
+                My Tickets
+              </Button>
             </li>
             <li>
               <Button defaultButton onClick={handleMe}>
