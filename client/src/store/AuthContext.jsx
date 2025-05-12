@@ -117,7 +117,9 @@ export function AuthContextProvider({ children }) {
     const result = await updateProfileAction(formData);
 
     if (result.success) {
-      setMessage({ authSuccess: result.message });
+      setMessage({
+        updateMessage: { success: result.success, message: result.message },
+      });
       dispatchUserAction({
         type: "LOGIN",
         payload: {
@@ -126,7 +128,9 @@ export function AuthContextProvider({ children }) {
       });
     }
 
-    setMessage({ updateMessage: result.message });
+    setMessage({
+      updateMessage: { success: result.success, message: result.message },
+    });
   }
 
   const contextValue = {
