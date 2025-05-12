@@ -91,6 +91,39 @@ export function AuthContextProvider({ children }) {
     }
   }
 
+  async function Register(data) {
+    try {
+      setMessage(undefined);
+      const response = await fetch(
+        "http://localhost:3000/api/v1/auth/register",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...data,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
+      const result = await response.json();
+
+      if (result.status === "success")
+        setMessage({
+          registerSuccess: "Registration successful! You can now login.",
+        });
+    } catch (error) {
+      setMessage({ registerError: error.message });
+    }
+  }
+
   async function Logout() {
     try {
       setMessage(undefined);
@@ -168,6 +201,7 @@ export function AuthContextProvider({ children }) {
     setMessage,
     Login,
     Logout,
+    Register,
     updateProfile,
     updatePassword,
   };

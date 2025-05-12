@@ -15,7 +15,7 @@ import AuthContext from "../store/AuthContext";
 
 export default function Register() {
   const { setType } = useContext(AppContext);
-  const { register, message } = useContext(AuthContext);
+  const { Register, message } = useContext(AuthContext);
   const [formState, formAction, isPending] = useActionState(registerAction, {
     enteredValues: {
       username: "",
@@ -27,6 +27,8 @@ export default function Register() {
     },
     error: null,
   });
+
+  console.log(message);
 
   async function registerAction(prevState, formData) {
     if (!(formData instanceof FormData)) return formData;
@@ -67,14 +69,14 @@ export default function Register() {
       };
     }
 
-    await register(
+    await Register({
       username,
       email,
       firstName,
       lastName,
       password,
-      confirmPassword
-    );
+      confirmPassword,
+    });
     return {
       error: null,
       enteredValues: {
@@ -89,7 +91,7 @@ export default function Register() {
   }
 
   useEffect(() => {
-    if (message?.success) {
+    if (message?.registerSuccess) {
       const timeout = setTimeout(() => {
         startTransition(() => {
           formAction({
@@ -102,7 +104,7 @@ export default function Register() {
           });
           setType("login");
         });
-      }, 1000);
+      }, 2000);
 
       return () => clearTimeout(timeout);
     }
@@ -117,9 +119,13 @@ export default function Register() {
       <h1 className="text-2xl font-medium text-slate-900">
         Register an account
       </h1>
-      {message?.registerError && (
-        <p className="text-red-300">{message.registerError.error}</p>
+      {message?.registerSuccess && (
+        <p className="text-green-300 text-center">{message.registerSuccess}</p>
       )}
+      {message?.registerError && (
+        <p className="text-red-300">{message.registerError}</p>
+      )}
+
       <form action={formAction} className="flex flex-col gap-4 mt-4">
         <Input
           labelText="Username"

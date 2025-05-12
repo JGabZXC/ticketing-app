@@ -104,7 +104,7 @@ export default function Ticket() {
         <div className="flex gap-2 justify-center items-center w-full">
           <svg
             aria-hidden="true"
-            className="w-8 h-8 text-gray-200 animate-spin fill-green-600"
+            class="inline w-4 h-4 text-gray-200 animate-spin fill-green-600"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
