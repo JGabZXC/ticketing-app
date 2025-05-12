@@ -1,5 +1,5 @@
 import { createContext, useReducer, useState, useEffect } from "react";
-import { updateProfileAction } from "../utils/actions";
+import { updateProfileAction, updatePasswordAction } from "../utils/actions";
 
 const AuthContext = createContext({
   user: null,
@@ -8,6 +8,8 @@ const AuthContext = createContext({
   Login: () => {},
   Logout: () => {},
   Register: () => {},
+  updateProfile: () => {},
+  updatePassword: () => {},
 });
 
 function authReducer(state, action) {
@@ -133,6 +135,32 @@ export function AuthContextProvider({ children }) {
     });
   }
 
+  async function updatePassword(formData) {
+    const result = await updatePasswordAction(formData);
+
+    if (result.success) {
+      setMessage({
+        updatePasswordMessage: {
+          success: result.success,
+          message: result.message,
+        },
+      });
+      dispatchUserAction({
+        type: "LOGIN",
+        payload: {
+          user: result.user,
+        },
+      });
+    }
+
+    setMessage({
+      updatePasswordMessage: {
+        success: result.success,
+        message: result.message,
+      },
+    });
+  }
+
   const contextValue = {
     user: userState.user,
     isAuthenticated: userState.isAuthenticated,
@@ -141,6 +169,7 @@ export function AuthContextProvider({ children }) {
     Login,
     Logout,
     updateProfile,
+    updatePassword,
   };
 
   return <AuthContext value={contextValue}>{children}</AuthContext>;
