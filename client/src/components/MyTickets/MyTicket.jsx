@@ -11,15 +11,47 @@ export default function MyTicket() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState("-createdAt");
+  const [limit, setLimit] = useState(20);
+  const [filterPriority, setFilterPriority] = useState("all");
 
   // Fetch tickets from the server
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterPriority]);
+
+  useEffect(() => {
+    if (totalPages < currentPage) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, totalPages]);
+
   useEffect(() => {
     async function fetchTickets() {
       try {
         setLoading(true);
-        const response = await fetch(
-          `http://localhost:3000/api/v1/users/${user._id}/tickets?page=${currentPage}`
-        );
+        // Construct the base URL
+        const baseUrl =
+          filterPriority === "all"
+            ? `http://localhost:3000/api/v1/users/${user._id}/tickets`
+            : `http://localhost:3000/api/v1/tickets/priority/${filterPriority}`;
+
+        // Construct query parameters
+        const queryParams = new URLSearchParams({
+          sort: sortBy,
+          page: currentPage,
+          limit: limit,
+        });
+
+        console.log(queryParams);
+        console.log(queryParams.toString());
+
+        const url = `${baseUrl}?${queryParams.toString()}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch tickets");
@@ -35,7 +67,7 @@ export default function MyTicket() {
       }
     }
     fetchTickets();
-  }, [currentPage, user._id]);
+  }, [currentPage, user._id, limit, sortBy, filterPriority]);
 
   useEffect(() => {
     if (error) {
@@ -75,6 +107,53 @@ export default function MyTicket() {
         </div>
       )}
       {error && <p className="text-red-300 text-center">{error}</p>}
+      <div className="flex w-full gap-4">
+        <div className="flex items-center gap-2">
+          <label htmlFor="sortBy" className="text-slate-900 text-sm">
+            Sort By
+          </label>
+          <select
+            name="sortBy"
+            id="sortBy"
+            className="p-2 focus:outline-0"
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="-createdAt">Newest</option>
+            <option value="createdAt">Oldest</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="limit" className="text-slate-900 text-sm">
+            Show Tickets
+          </label>
+          <select
+            name="limit"
+            id="limit"
+            className="p-2 focus:outline-0"
+            onChange={(e) => setLimit(e.target.value)}
+          >
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="filter" className="text-slate-900 text-sm">
+            Filter Priority
+          </label>
+          <select
+            name="filter"
+            id="filter"
+            className="p-2 focus:outline-0"
+            onChange={(e) => setFilterPriority(e.target.value)}
+          >
+            <option value={"all"}>All</option>
+            <option value={"low"}>Low</option>
+            <option value={"medium"}>Medium</option>
+            <option value={"high"}>High</option>
+          </select>
+        </div>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tickets.length > 0 ? (
           tickets.map((ticket) => (

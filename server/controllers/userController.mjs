@@ -135,8 +135,6 @@ export const updateMe = catchAsync(async (req, res, next) => {
   if (!req.body.firstName) delete req.body.firstName;
   if (!req.body.lastName) delete req.body.lastName;
 
-  console.log(req.body);
-
   const user = await User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
     runValidators: true,

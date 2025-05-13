@@ -16,12 +16,7 @@ export const getAllTickets = catchAsync(async (req, res, next) => {
   const totalPages = Math.ceil(totalTickets / (req.query.limit || 20));
 
   const tickets = await query;
-  console.log({
-    status: "success",
-    results: tickets.length,
-    totalTickets,
-    totalPages,
-  });
+
   res.status(200).json({
     status: "success",
     results: tickets.length,
@@ -182,6 +177,58 @@ export const deleteComment = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       ticket,
+    },
+  });
+});
+
+export const getPriority = catchAsync(async (req, res, next) => {
+  // Authenticated via middleware
+  const { priority } = req.params;
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || 20;
+  const skip = (page - 1) * limit;
+
+  let sortVal = -1;
+  if (req.query.sort === "createdAt") sortVal = 1;
+  if (req.query.sort === "-createdAt") sortVal = -1;
+
+  const result = await Ticket.aggregate([
+    {
+      $match: {
+        createdBy: req.user._id,
+        priority: priority,
+      },
+    },
+    {
+      $facet: {
+        metadata: [
+          { $count: "totalTickets" },
+          {
+            $addFields: {
+              totalPages: {
+                $ceil: { $divide: ["$totalTickets", limit] },
+              },
+            },
+          },
+        ],
+        data: [
+          { $skip: skip },
+          { $limit: limit },
+          { $sort: { createdAt: sortVal } },
+        ],
+      },
+    },
+  ]);
+
+  const metadata = result[0].metadata[0] || { totalTickets: 0, totalPages: 0 };
+  const tickets = result[0].data;
+
+  res.status(200).json({
+    status: "success",
+    totalTickets: metadata.totalTickets,
+    totalPages: metadata.totalPages,
+    data: {
+      tickets,
     },
   });
 });

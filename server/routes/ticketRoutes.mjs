@@ -8,6 +8,7 @@ import {
   getComment,
   postComment,
   deleteComment,
+  getPriority,
 } from "../controllers/ticketController.mjs";
 import {
   isAuthenticated,
@@ -35,5 +36,7 @@ router
 router
   .route("/:ticketId/delete/:commentId")
   .delete(isAuthenticated, deleteComment);
+
+router.route("/priority/:priority").get(isAuthenticated, getPriority);
 
 export default router;
