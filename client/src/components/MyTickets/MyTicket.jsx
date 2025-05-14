@@ -3,6 +3,8 @@ import AuthContext from "../../store/AuthContext";
 
 import CardTicket from "../Ticket/CardTicket";
 import Button from "../ui/button";
+import Select from "../ui/select";
+import Pagination from "../ui/pagination";
 
 export default function MyTicket() {
   const { user } = useContext(AuthContext);
@@ -89,7 +91,7 @@ export default function MyTicket() {
         <div className="flex gap-2 justify-center items-center w-full">
           <svg
             aria-hidden="true"
-            className="w-8 h-8 text-gray-200 animate-spin fill-green-600"
+            class="inline w-4 h-4 text-gray-200 animate-spin fill-green-600"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -108,51 +110,36 @@ export default function MyTicket() {
       )}
       {error && <p className="text-red-300 text-center">{error}</p>}
       <div className="flex w-full gap-4">
-        <div className="flex items-center gap-2">
-          <label htmlFor="sortBy" className="text-slate-900 text-sm">
-            Sort By
-          </label>
-          <select
-            name="sortBy"
-            id="sortBy"
-            className="p-2 focus:outline-0"
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value="-createdAt">Newest</option>
-            <option value="createdAt">Oldest</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="limit" className="text-slate-900 text-sm">
-            Show Tickets
-          </label>
-          <select
-            name="limit"
-            id="limit"
-            className="p-2 focus:outline-0"
-            onChange={(e) => setLimit(e.target.value)}
-          >
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="filter" className="text-slate-900 text-sm">
-            Filter Priority
-          </label>
-          <select
-            name="filter"
-            id="filter"
-            className="p-2 focus:outline-0"
-            onChange={(e) => setFilterPriority(e.target.value)}
-          >
-            <option value={"all"}>All</option>
-            <option value={"low"}>Low</option>
-            <option value={"medium"}>Medium</option>
-            <option value={"high"}>High</option>
-          </select>
-        </div>
+        <Select
+          labelText="Sort By"
+          id="sortBy"
+          name="sortBy"
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="-createdAt">Newest</option>
+          <option value="createdAt">Oldest</option>
+        </Select>
+        <Select
+          labelText="Show Tickets"
+          id="limit"
+          name="limit"
+          onChange={(e) => setLimit(e.target.value)}
+        >
+          <option value={20}>20</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </Select>
+        <Select
+          labelText="Filter By Priority"
+          id="filterPriority"
+          name="filterPriority"
+          onChange={(e) => setFilterPriority(e.target.value)}
+        >
+          <option value={"all"}>All</option>
+          <option value={"low"}>Low</option>
+          <option value={"medium"}>Medium</option>
+          <option value={"high"}>High</option>
+        </Select>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tickets.length > 0 ? (
@@ -164,53 +151,11 @@ export default function MyTicket() {
         )}
       </div>
 
-      <div className="flex justify-center items-center gap-4 m-6">
-        <Button
-          type="button"
-          className="px-4 py-2 text-gray-700 hover:text-gray-300"
-          onClick={() => handlePageChange("prev")}
-          disabled={currentPage === 1}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-        </Button>
-        <span className="text-gray-700">
-          Page {currentPage} of {totalPages}
-        </span>
-        <Button
-          type="button"
-          className="px-4 py-2 text-gray-700 hover:text-gray-300"
-          onClick={() => handlePageChange("next")}
-          disabled={currentPage === totalPages}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-        </Button>
-      </div>
+      <Pagination
+        handlePageChange={handlePageChange}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

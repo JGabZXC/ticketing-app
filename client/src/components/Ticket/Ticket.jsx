@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import AuthContext from "../../store/AuthContext";
 
 import CardTicket from "./CardTicket";
 import CreateTicket from "./CreateTicket";
 import Button from "../ui/button";
+import Select from "../ui/select";
 
 export default function Ticket() {
+  const { user } = useContext(AuthContext);
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -13,7 +16,7 @@ export default function Ticket() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("-createdAt");
-  const [showOnly, setShowOnly] = useState(20);
+  const [limit, setLimit] = useState(20);
 
   // Fetch tickets from the server
   useEffect(() => {
@@ -21,7 +24,7 @@ export default function Ticket() {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:3000/api/v1/tickets?page=${currentPage}&limit=${showOnly}&sort=${sortBy}`
+          `http://localhost:3000/api/v1/tickets?page=${currentPage}&limit=${limit}&sort=${sortBy}`
         );
 
         if (!response.ok) {
@@ -38,7 +41,7 @@ export default function Ticket() {
       }
     }
     fetchTickets();
-  }, [currentPage, showOnly, sortBy]);
+  }, [currentPage, limit, sortBy]);
 
   useEffect(() => {
     if (error) {
@@ -133,49 +136,38 @@ export default function Ticket() {
         />
       ) : (
         <>
-          <div className="flex justify-between items-center">
-            <div>
-              <Button
-                type="button"
-                className="cursor-pointer my-2 py-2 px-4 rounded-md text-stone-100 bg-indigo-600 hover:bg-indigo-700 transition duration-200 font-medium"
-                onClick={() => setIsCreating(true)}
+          <div className="flex justify-between items-center mb-2">
+            {user && (
+              <div>
+                <Button
+                  type="button"
+                  className="cursor-pointer my-2 py-2 px-4 rounded-md text-stone-100 bg-indigo-600 hover:bg-indigo-700 transition duration-200 font-medium"
+                  onClick={() => setIsCreating(true)}
+                >
+                  Create Ticket
+                </Button>
+              </div>
+            )}
+            <div className="flex justify-end gap-4">
+              <Select
+                labelText="Sort By"
+                id="sortBy"
+                name="sortBy"
+                onChange={(e) => setSortBy(e.target.value)}
               >
-                Create Ticket
-              </Button>
-            </div>
-            <div className="flex justify-end">
-              <div className="flex items-center">
-                <label
-                  htmlFor="sortBy"
-                  className="text-slate-900 text-sm w-full"
-                >
-                  Sort By
-                </label>
-                <select
-                  name="sortBy"
-                  id="sortBy"
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="-createdAt">Newest</option>
-                  <option value="createdAt">Oldest</option>
-                </select>
-              </div>
-              <div className="flex items-center">
-                <label htmlFor="showOnly" className="text-slate-900 text-sm">
-                  Show Tickets
-                </label>
-                <select
-                  name="showOnly"
-                  id="showOnly"
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  onChange={(e) => setShowOnly(e.target.value)}
-                >
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-              </div>
+                <option value="-createdAt">Newest</option>
+                <option value="createdAt">Oldest</option>
+              </Select>
+              <Select
+                labelText="Show Tickets"
+                id="limit"
+                name="limit"
+                onChange={(e) => setLimit(e.target.value)}
+              >
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </Select>
             </div>
           </div>
 
