@@ -1,5 +1,9 @@
+import { useContext } from "react";
+import AppContext from "../../store/AppContext";
+
 export default function CardTicket({ ticket }) {
-  let classes = "border rounded-lg p-4 shadow-md bg-white";
+  const { setSelectedTicket, setType } = useContext(AppContext);
+  let classes = "cursor-pointer border rounded-lg p-4 shadow-md bg-white";
 
   if (ticket.priority === "high") {
     classes += " border-red-500";
@@ -9,8 +13,13 @@ export default function CardTicket({ ticket }) {
     classes += " border-gray-300";
   }
 
+  function handleClick() {
+    setSelectedTicket(ticket._id);
+    setType("showTicket");
+  }
+
   return (
-    <div className={classes}>
+    <div className={classes} onClick={handleClick}>
       <h2 className="text-xl font-bold text-gray-700 break-all">
         {ticket.title.slice(0, 20)}
         {ticket.title.length > 20 ? "..." : undefined}

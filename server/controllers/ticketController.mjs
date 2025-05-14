@@ -38,6 +38,9 @@ export const getTicket = catchAsync(async (req, res, next) => {
     .populate({
       path: "assignedTo",
       select: "username role firstName lastName",
+    })
+    .populate({
+      path: "comments.postedBy",
     });
 
   if (!ticket) return next(new AppError("No ticket found with that ID", 404));
@@ -126,7 +129,9 @@ export const getComment = catchAsync(async (req, res, next) => {
 export const postComment = catchAsync(async (req, res, next) => {
   const { ticketId } = req.params;
   const { comment } = req.body;
-  const ticket = await Ticket.findById(ticketId);
+  const ticket = await Ticket.findById(ticketId).populate({
+    path: "comments.postedBy",
+  });
 
   if (!ticket) return next(new AppError("No ticket found with that ID", 404));
   if (!comment) return next(new AppError("Please provide a comment", 400));

@@ -24,7 +24,7 @@ router
 
 router
   .route("/:id")
-  .get(isAuthenticated, getTicket)
+  .get(getTicket)
   .patch(isAuthenticated, updateTicket)
   .delete(isAuthenticated, authorizedTo("admin", "superadmin"), deleteTicket);
 
