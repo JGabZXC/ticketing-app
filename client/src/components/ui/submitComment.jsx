@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Button from "./button";
+import AuthContext from "../../store/AuthContext";
 
-export default function SubmitComment({ ticketId }) {
+export default function SubmitComment({ ticketId, setTicket }) {
+  const { user } = useContext(AuthContext);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -27,7 +29,22 @@ export default function SubmitComment({ ticketId }) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to submit comment");
       }
-      console.log("Comment submitted successfully");
+      setComment("");
+      setTicket((prevTicket) => ({
+        ...prevTicket,
+        comments: [
+          ...prevTicket.comments,
+          {
+            comment,
+            postedBy: {
+              username: user.username,
+              fullName: user.fullName,
+              role: user.role,
+            },
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      }));
     } catch (error) {
       setError(error.message);
     } finally {

@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 import Ticket from "../models/Ticket.js";
 import catchAsync from "../utils/catchAsync.js";
 import Features from "../utils/Features.js";
@@ -202,9 +204,11 @@ export const getPriority = catchAsync(async (req, res, next) => {
     priority: priority,
   };
 
-  if (getmyticket !== "false") {
-    matchStage.createdBy = getmyticket;
+  if (getmyticket && getmyticket !== "false") {
+    matchStage.createdBy = new mongoose.Types.ObjectId(getmyticket);
   }
+
+  matchStage.createdBy;
 
   const result = await Ticket.aggregate([
     {

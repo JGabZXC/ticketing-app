@@ -47,19 +47,22 @@ export function TicketContextProvider({ children }) {
         setLoading(true);
         let response;
 
-        if (filterByPriority !== "all") {
-          response = await fetch(
-            `http://localhost:3000/api/v1/tickets/priority/${filterByPriority}?page=${currentPage}&limit=${limit}&sort=${orderBy}&getmyticket=${getMyTicket}`
-          );
-        } else if (!getMyTicket) {
-          response = await fetch(
-            `http://localhost:3000/api/v1/tickets?page=${currentPage}&limit=${limit}&sort=${orderBy}`
-          );
+        const baseUrl = "http://localhost:3000/api/v1";
+        let url = "";
+
+        if (getMyTicket) {
+          if (filterByPriority === "all") {
+            url = `${baseUrl}/users/${getMyTicket}/tickets?page=${currentPage}&limit=${limit}&sort=${orderBy}`;
+          } else {
+            url = `${baseUrl}/tickets/priority/${filterByPriority}?page=${currentPage}&limit=${limit}&sort=${orderBy}&getmyticket=${getMyTicket}`;
+          }
+        } else if (filterByPriority !== "all") {
+          url = `${baseUrl}/tickets/priority/${filterByPriority}?page=${currentPage}&limit=${limit}&sort=${orderBy}`;
         } else {
-          response = await fetch(
-            `http://localhost:3000/api/v1/users/${getMyTicket}/tickets?page=${currentPage}&limit=${limit}&sort=${orderBy}`
-          );
+          url = `${baseUrl}/tickets?page=${currentPage}&limit=${limit}&sort=${orderBy}`;
         }
+
+        response = await fetch(url);
 
         if (!response.ok) {
           throw new Error("Failed to fetch tickets");
@@ -75,7 +78,6 @@ export function TicketContextProvider({ children }) {
       }
     }
     fetchTickets();
-    console.log("get triggered");
   }, [currentPage, limit, orderBy, filterByPriority, getMyTicket]);
 
   function setErrorHandler(errorMessage) {

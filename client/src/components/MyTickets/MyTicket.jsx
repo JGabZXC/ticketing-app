@@ -36,8 +36,6 @@ export default function MyTicket() {
     }
   }, [error, setErrorHandler]);
 
-  console.log(orderBy, limit, filterByPriority);
-
   return (
     <div className="mt-10 px-2">
       {loading && (

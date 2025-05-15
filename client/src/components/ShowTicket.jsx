@@ -1,19 +1,21 @@
 import { useState, useEffect, useContext } from "react";
 import AppContext from "../store/AppContext";
 import AuthContext from "../store/AuthContext";
+import TicketContext from "../store/TicketContext";
 import Button from "./ui/button";
 import SubmitComment from "./ui/submitComment";
 
 export default function ShowTicket() {
-  const { selectedTicket, setType } = useContext(AppContext);
+  const { setType } = useContext(AppContext);
   const { user } = useContext(AuthContext);
+  const { selectedTicketId } = useContext(TicketContext);
   const [ticket, setTicket] = useState(null);
 
   useEffect(() => {
     async function fetchTicket() {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/tickets/${selectedTicket}`,
+          `http://localhost:3000/api/v1/tickets/${selectedTicketId}`,
           {
             method: "GET",
             credentials: "include",
@@ -29,7 +31,7 @@ export default function ShowTicket() {
       }
     }
     fetchTicket();
-  }, [selectedTicket]);
+  }, [selectedTicketId]);
 
   function handleBack() {
     setType("ticket");
@@ -125,7 +127,7 @@ export default function ShowTicket() {
         ))}
 
         {user && ticket?.status !== "closed" && (
-          <SubmitComment ticketId={selectedTicket} />
+          <SubmitComment ticketId={selectedTicketId} setTicket={setTicket} />
         )}
       </div>
     </section>

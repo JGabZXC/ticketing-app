@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import AppContext from "../../store/AppContext";
+import TicketContext from "../../store/TicketContext";
 
 export default function CardTicket({ ticket }) {
-  const { setSelectedTicket, setType } = useContext(AppContext);
+  const { setType } = useContext(AppContext);
+  const { setSelectedTicketHandler } = useContext(TicketContext);
   let classes = "cursor-pointer border rounded-lg p-4 shadow-md bg-white";
 
   if (ticket.priority === "high") {
@@ -14,7 +16,7 @@ export default function CardTicket({ ticket }) {
   }
 
   function handleClick() {
-    setSelectedTicket(ticket._id);
+    setSelectedTicketHandler(ticket._id);
     setType("showTicket");
   }
 
