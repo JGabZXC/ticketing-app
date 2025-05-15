@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import AuthContext from "../../store/AuthContext";
 import TicketContext from "../../store/TicketContext";
 
@@ -19,8 +19,21 @@ export default function Ticket() {
     setOrderByHandler,
     setLimitHandler,
     setFilterPriorityHandler,
+    error,
+    setErrorHandler,
+    orderBy,
+    limit,
+    filterByPriority,
   } = useContext(TicketContext);
   const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setErrorHandler(null);
+      }, 3000);
+    }
+  }, [error, setErrorHandler]);
 
   function handlePageChange(direction) {
     if (direction === "next") setCurrentPageNext();
@@ -78,6 +91,7 @@ export default function Ticket() {
                 id="orderBy"
                 name="orderBy"
                 onChange={(e) => setOrderByHandler(e.target.value)}
+                defaultValue={orderBy}
               >
                 <option value="-createdAt">Newest</option>
                 <option value="createdAt">Oldest</option>
@@ -87,6 +101,7 @@ export default function Ticket() {
                 id="limit"
                 name="limit"
                 onChange={(e) => setLimitHandler(e.target.value)}
+                defaultValue={limit}
               >
                 <option value={20}>20</option>
                 <option value={50}>50</option>
@@ -97,6 +112,7 @@ export default function Ticket() {
                 id="filterPriority"
                 name="filterPriority"
                 onChange={(e) => setFilterPriorityHandler(e.target.value)}
+                defaultValue={filterByPriority}
               >
                 <option value={"all"}>All</option>
                 <option value={"low"}>Low</option>
@@ -105,7 +121,7 @@ export default function Ticket() {
               </Select>
             </div>
           </div>
-
+          {error && <p className="text-red-300 text-center">{error}</p>}
           {!loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {tickets.length > 0 ? (

@@ -1,89 +1,42 @@
-import { useState, useEffect, useContext } from "react";
-import AuthContext from "../../store/AuthContext";
+import { useContext, useEffect } from "react";
+import TicketContext from "../../store/TicketContext";
 
 import CardTicket from "../Ticket/CardTicket";
-import Button from "../ui/button";
 import Select from "../ui/select";
 import Pagination from "../ui/pagination";
 
 export default function MyTicket() {
-  const { user } = useContext(AuthContext);
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortBy, setSortBy] = useState("-createdAt");
-  const [limit, setLimit] = useState(20);
-  const [filterPriority, setFilterPriority] = useState("all");
+  const {
+    tickets,
+    loading,
+    currentPage,
+    totalPages,
+    setCurrentPageNext,
+    setCurrentPagePrev,
+    setOrderByHandler,
+    setLimitHandler,
+    setFilterPriorityHandler,
+    error,
+    setErrorHandler,
+    orderBy,
+    limit,
+    filterByPriority,
+  } = useContext(TicketContext);
 
-  // Fetch tickets from the server
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filterPriority]);
-
-  useEffect(() => {
-    if (totalPages < currentPage) {
-      setCurrentPage(1);
-    }
-  }, [currentPage, totalPages]);
-
-  useEffect(() => {
-    async function fetchTickets() {
-      try {
-        setLoading(true);
-        // Construct the base URL
-        const baseUrl =
-          filterPriority === "all"
-            ? `http://localhost:3000/api/v1/users/${user._id}/tickets`
-            : `http://localhost:3000/api/v1/tickets/priority/${filterPriority}`;
-
-        // Construct query parameters
-        const queryParams = new URLSearchParams({
-          sort: sortBy,
-          page: currentPage,
-          limit: limit,
-        });
-
-        console.log(queryParams);
-        console.log(queryParams.toString());
-
-        const url = `${baseUrl}?${queryParams.toString()}`;
-
-        const response = await fetch(url, {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch tickets");
-        }
-
-        const data = await response.json();
-        setTickets(data.data.tickets);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTickets();
-  }, [currentPage, user._id, limit, sortBy, filterPriority]);
+  function handlePageChange(direction) {
+    if (direction === "next") setCurrentPageNext();
+    else direction === "prev" && setCurrentPagePrev();
+  }
 
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(() => {
-        setError("");
+      setTimeout(() => {
+        setErrorHandler(null);
       }, 3000);
-      return () => clearTimeout(timer);
     }
-  }, [error]);
+  }, [error, setErrorHandler]);
 
-  function handlePageChange(direction) {
-    if (direction === "next") setCurrentPage((prevPage) => prevPage + 1);
-    else direction === "prev" && setCurrentPage((prevPage) => prevPage - 1);
-  }
+  console.log(orderBy, limit, filterByPriority);
 
   return (
     <div className="mt-10 px-2">
@@ -114,7 +67,8 @@ export default function MyTicket() {
           labelText="Sort By"
           id="sortBy"
           name="sortBy"
-          onChange={(e) => setSortBy(e.target.value)}
+          onChange={(e) => setOrderByHandler(e.target.value)}
+          defaultValue={orderBy}
         >
           <option value="-createdAt">Newest</option>
           <option value="createdAt">Oldest</option>
@@ -123,7 +77,8 @@ export default function MyTicket() {
           labelText="Show Tickets"
           id="limit"
           name="limit"
-          onChange={(e) => setLimit(e.target.value)}
+          onChange={(e) => setLimitHandler(e.target.value)}
+          defaultValue={limit}
         >
           <option value={20}>20</option>
           <option value={50}>50</option>
@@ -133,7 +88,8 @@ export default function MyTicket() {
           labelText="Filter By Priority"
           id="filterPriority"
           name="filterPriority"
-          onChange={(e) => setFilterPriority(e.target.value)}
+          onChange={(e) => setFilterPriorityHandler(e.target.value)}
+          defaultValue={filterByPriority}
         >
           <option value={"all"}>All</option>
           <option value={"low"}>Low</option>
@@ -141,15 +97,18 @@ export default function MyTicket() {
           <option value={"high"}>High</option>
         </Select>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tickets.length > 0 ? (
-          tickets.map((ticket) => (
-            <CardTicket ticket={ticket} key={ticket._id} />
-          ))
-        ) : (
-          <p className="text-gray-500 text-center">No tickets available.</p>
-        )}
-      </div>
+      {error && <p className="text-red-300 text-center">{error}</p>}
+      {!loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tickets.length > 0 ? (
+            tickets.map((ticket) => (
+              <CardTicket ticket={ticket} key={ticket._id} />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center">No tickets available.</p>
+          )}
+        </div>
+      )}
 
       <Pagination
         handlePageChange={handlePageChange}

@@ -9,7 +9,7 @@ const TicketContext = createContext({
   loading: false,
   setLoading: () => {},
   error: null,
-  setError: () => {},
+  setErrorHandler: () => {},
   page: 1,
   setCurrentPageNext: () => {},
   setCurrentPagePrev: () => {},
@@ -22,6 +22,7 @@ const TicketContext = createContext({
   addCommentToSelectedTicket: () => {},
   filterByPriority: "all",
   setFilterPriorityHandler: () => {},
+  setGetMyTicketHandler: () => {},
 });
 
 export function TicketContextProvider({ children }) {
@@ -50,13 +51,15 @@ export function TicketContextProvider({ children }) {
           response = await fetch(
             `http://localhost:3000/api/v1/tickets/priority/${filterByPriority}?page=${currentPage}&limit=${limit}&sort=${orderBy}&getmyticket=${getMyTicket}`
           );
-        } else {
+        } else if (!getMyTicket) {
           response = await fetch(
             `http://localhost:3000/api/v1/tickets?page=${currentPage}&limit=${limit}&sort=${orderBy}`
           );
+        } else {
+          response = await fetch(
+            `http://localhost:3000/api/v1/users/${getMyTicket}/tickets?page=${currentPage}&limit=${limit}&sort=${orderBy}`
+          );
         }
-
-        console.log(response);
 
         if (!response.ok) {
           throw new Error("Failed to fetch tickets");
@@ -72,7 +75,12 @@ export function TicketContextProvider({ children }) {
       }
     }
     fetchTickets();
+    console.log("get triggered");
   }, [currentPage, limit, orderBy, filterByPriority, getMyTicket]);
+
+  function setErrorHandler(errorMessage) {
+    setError(errorMessage);
+  }
 
   function setCurrentPageNext() {
     setCurrentPage((prevPage) => prevPage + 1);
@@ -146,6 +154,10 @@ export function TicketContextProvider({ children }) {
     setFilterPriority(priority);
   }
 
+  function setGetMyTicketHandler(id) {
+    setGetMyTicket(id);
+  }
+
   const contextValue = {
     tickets,
     selectedTicketId,
@@ -154,8 +166,10 @@ export function TicketContextProvider({ children }) {
     error,
     currentPage,
     totalPages,
-    setOrderBy,
+    orderBy,
+    filterByPriority,
     limit,
+    setErrorHandler,
     setCurrentPageNext,
     setCurrentPagePrev,
     setLimitHandler,
@@ -164,9 +178,14 @@ export function TicketContextProvider({ children }) {
     setSelectedTicketHandler,
     addCommentToSelectedTicket,
     setFilterPriorityHandler,
+    setGetMyTicketHandler,
   };
 
-  return <TicketContext value={contextValue}>{children}</TicketContext>;
+  return (
+    <TicketContext.Provider value={contextValue}>
+      {children}
+    </TicketContext.Provider>
+  );
 }
 
 export default TicketContext;

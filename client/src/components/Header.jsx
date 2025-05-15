@@ -3,11 +3,13 @@ import { useContext, useState } from "react";
 import Button from "./ui/button";
 import AppContext from "../store/AppContext";
 import AuthContext from "../store/AuthContext";
+import TicketContext from "../store/TicketContext";
 
 export default function Header() {
   const { setType } = useContext(AppContext);
   const { user, Logout } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu toggle
+  const { setGetMyTicketHandler } = useContext(TicketContext);
 
   function handleHome() {
     setType("home");
@@ -16,6 +18,7 @@ export default function Header() {
 
   function handleTicket() {
     setType("ticket");
+    setGetMyTicketHandler(false);
     setIsMenuOpen(false);
   }
 
@@ -37,6 +40,7 @@ export default function Header() {
 
   function handleMyTicket() {
     setType("myTicket");
+    setGetMyTicketHandler(user._id);
     setIsMenuOpen(false);
   }
 
