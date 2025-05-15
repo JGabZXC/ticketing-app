@@ -189,6 +189,7 @@ export const deleteComment = catchAsync(async (req, res, next) => {
 export const getPriority = catchAsync(async (req, res, next) => {
   // Authenticated via middleware
   const { priority } = req.params;
+  const { getmyticket } = req.query; // This should be the userId of the logged in user
   const page = +req.query.page || 1;
   const limit = +req.query.limit || 20;
   const skip = (page - 1) * limit;
@@ -197,12 +198,17 @@ export const getPriority = catchAsync(async (req, res, next) => {
   if (req.query.sort === "createdAt") sortVal = 1;
   if (req.query.sort === "-createdAt") sortVal = -1;
 
+  const matchStage = {
+    priority: priority,
+  };
+
+  if (getmyticket !== "false") {
+    matchStage.createdBy = getmyticket;
+  }
+
   const result = await Ticket.aggregate([
     {
-      $match: {
-        createdBy: req.user._id,
-        priority: priority,
-      },
+      $match: matchStage,
     },
     {
       $facet: {

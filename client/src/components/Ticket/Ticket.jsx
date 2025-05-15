@@ -1,5 +1,6 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import AuthContext from "../../store/AuthContext";
+import TicketContext from "../../store/TicketContext";
 
 import CardTicket from "./CardTicket";
 import CreateTicket from "./CreateTicket";
@@ -8,97 +9,22 @@ import Select from "../ui/select";
 
 export default function Ticket() {
   const { user } = useContext(AuthContext);
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const {
+    tickets,
+    loading,
+    currentPage,
+    totalPages,
+    setCurrentPageNext,
+    setCurrentPagePrev,
+    setOrderByHandler,
+    setLimitHandler,
+    setFilterPriorityHandler,
+  } = useContext(TicketContext);
   const [isCreating, setIsCreating] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortBy, setSortBy] = useState("-createdAt");
-  const [limit, setLimit] = useState(20);
-
-  // Fetch tickets from the server
-  useEffect(() => {
-    async function fetchTickets() {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `http://localhost:3000/api/v1/tickets?page=${currentPage}&limit=${limit}&sort=${sortBy}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch tickets");
-        }
-
-        const data = await response.json();
-        setTickets(data.data.tickets);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTickets();
-  }, [currentPage, limit, sortBy]);
-
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        setError("");
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-
-    if (message) {
-      const timer = setTimeout(() => {
-        setMessage("");
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, message]);
-
-  async function handleCreateTicket(formData) {
-    try {
-      setLoading(true);
-      const response = await fetch("http://localhost:3000/api/v1/tickets", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(Object.fromEntries(formData.entries())),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create ticket");
-      }
-
-      const data = await response.json();
-
-      if (tickets.length === 20) {
-        setTickets((prevTickets) => [
-          data.data.ticket,
-          ...prevTickets.slice(0, 19),
-        ]);
-      } else {
-        setTickets((prevTickets) => [data.data.tickets, ...prevTickets]);
-      }
-
-      setIsCreating(false);
-      setMessage("Ticket created successfully");
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   function handlePageChange(direction) {
-    if (direction === "next") setCurrentPage((prevPage) => prevPage + 1);
-    else direction === "prev" && setCurrentPage((prevPage) => prevPage - 1);
+    if (direction === "next") setCurrentPageNext();
+    else direction === "prev" && setCurrentPagePrev();
   }
 
   return (
@@ -124,15 +50,13 @@ export default function Ticket() {
           <p className="text-green-300 text-center">Loading</p>
         </div>
       )}
-      {error && <p className="text-red-300 text-center">{error}</p>}
-      {message && <p className="text-green-300 text-center">{message}</p>}
 
       {isCreating ? (
         <CreateTicket
           onCancel={() => {
             setIsCreating(false);
           }}
-          onCreate={handleCreateTicket}
+          onCreate={() => console.log("Ticket created successfully")}
         />
       ) : (
         <>
@@ -150,10 +74,10 @@ export default function Ticket() {
             )}
             <div className="flex justify-end gap-4">
               <Select
-                labelText="Sort By"
-                id="sortBy"
-                name="sortBy"
-                onChange={(e) => setSortBy(e.target.value)}
+                labelText="Order By"
+                id="orderBy"
+                name="orderBy"
+                onChange={(e) => setOrderByHandler(e.target.value)}
               >
                 <option value="-createdAt">Newest</option>
                 <option value="createdAt">Oldest</option>
@@ -162,24 +86,39 @@ export default function Ticket() {
                 labelText="Show Tickets"
                 id="limit"
                 name="limit"
-                onChange={(e) => setLimit(e.target.value)}
+                onChange={(e) => setLimitHandler(e.target.value)}
               >
                 <option value={20}>20</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </Select>
+              <Select
+                labelText="Filter By Priority"
+                id="filterPriority"
+                name="filterPriority"
+                onChange={(e) => setFilterPriorityHandler(e.target.value)}
+              >
+                <option value={"all"}>All</option>
+                <option value={"low"}>Low</option>
+                <option value={"medium"}>Medium</option>
+                <option value={"high"}>High</option>
+              </Select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tickets.length > 0 ? (
-              tickets.map((ticket) => (
-                <CardTicket ticket={ticket} key={ticket._id} />
-              ))
-            ) : (
-              <p className="text-gray-500 text-center">No tickets available.</p>
-            )}
-          </div>
+          {!loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tickets.length > 0 ? (
+                tickets.map((ticket) => (
+                  <CardTicket ticket={ticket} key={ticket._id} />
+                ))
+              ) : (
+                <p className="text-gray-500 text-center">
+                  No tickets available.
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-center items-center gap-4 m-6">
             <Button

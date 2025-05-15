@@ -37,6 +37,6 @@ router
   .route("/:ticketId/delete/:commentId")
   .delete(isAuthenticated, deleteComment);
 
-router.route("/priority/:priority").get(isAuthenticated, getPriority);
+router.route("/priority/:priority").get(getPriority);
 
 export default router;
