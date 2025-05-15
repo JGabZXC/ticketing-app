@@ -26,7 +26,10 @@ export default function CardTicket({ ticket }) {
         {ticket.title.slice(0, 20)}
         {ticket.title.length > 20 ? "..." : undefined}
       </h2>
-      <p className="text-gray-500 mt-2">{ticket.description.slice(0, 50)}</p>
+      <p className="text-gray-500 mt-2">
+        {ticket.description.slice(0, 30)}
+        {ticket.description.length > 30 ? "..." : undefined}
+      </p>
       <div className="flex justify-between items-center mt-4">
         <span
           className={`px-3 py-1 rounded-full text-sm font-medium ${

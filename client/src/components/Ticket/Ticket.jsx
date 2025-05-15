@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import AuthContext from "../../store/AuthContext";
 import TicketContext from "../../store/TicketContext";
 
@@ -29,9 +29,11 @@ export default function Ticket() {
 
   useEffect(() => {
     if (error) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setErrorHandler(null);
       }, 3000);
+
+      return () => clearTimeout(timeout);
     }
   }, [error, setErrorHandler]);
 
@@ -39,6 +41,10 @@ export default function Ticket() {
     if (direction === "next") setCurrentPageNext();
     else direction === "prev" && setCurrentPagePrev();
   }
+
+  const handleCancel = useCallback(function () {
+    setIsCreating(false);
+  }, []);
 
   return (
     <div className="mt-10 px-2">
@@ -65,12 +71,7 @@ export default function Ticket() {
       )}
 
       {isCreating ? (
-        <CreateTicket
-          onCancel={() => {
-            setIsCreating(false);
-          }}
-          onCreate={() => console.log("Ticket created successfully")}
-        />
+        <CreateTicket onCancel={handleCancel} />
       ) : (
         <>
           <div className="flex justify-between items-center mb-2">
@@ -121,6 +122,7 @@ export default function Ticket() {
               </Select>
             </div>
           </div>
+
           {error && <p className="text-red-300 text-center">{error}</p>}
           {!loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

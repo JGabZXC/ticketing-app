@@ -23,6 +23,9 @@ const TicketContext = createContext({
   filterByPriority: "all",
   setFilterPriorityHandler: () => {},
   setGetMyTicketHandler: () => {},
+  message: null,
+  setMessageHandler: () => {},
+  updateTicketHandler: () => {},
 });
 
 export function TicketContextProvider({ children }) {
@@ -36,6 +39,7 @@ export function TicketContextProvider({ children }) {
   const [error, setError] = useState(null);
   const [filterByPriority, setFilterPriority] = useState("all");
   const [getMyTicket, setGetMyTicket] = useState(false);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(1);
@@ -135,6 +139,7 @@ export function TicketContextProvider({ children }) {
       } else {
         setTickets((prevTickets) => [data.data.tickets, ...prevTickets]);
       }
+      setMessage("Ticket created successfully");
     } catch (error) {
       setError(error.message);
     } finally {
@@ -160,6 +165,39 @@ export function TicketContextProvider({ children }) {
     setGetMyTicket(id);
   }
 
+  function setMessageHandler(message) {
+    setMessage(message);
+  }
+
+  async function updateTicketHandler(ticketId, fd) {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `http://localhost:3000/api/v1/tickets/${ticketId}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...fd,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch ticket");
+      }
+      setMessage("Ticket updated successfully");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const contextValue = {
     tickets,
     selectedTicketId,
@@ -181,6 +219,9 @@ export function TicketContextProvider({ children }) {
     addCommentToSelectedTicket,
     setFilterPriorityHandler,
     setGetMyTicketHandler,
+    message,
+    setMessageHandler,
+    updateTicketHandler,
   };
 
   return (

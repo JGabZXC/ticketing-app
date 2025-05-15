@@ -1,22 +1,32 @@
-import { useState } from "react";
+import { useContext, useEffect } from "react";
+import TicketContext from "../../store/TicketContext";
 
 import Input from "../ui/input";
 import Button from "../ui/button";
 
-export default function CreateTicket({ onCancel, onCreate }) {
-  const [loading, setLoading] = useState(false);
+export default function CreateTicket({ onCancel }) {
+  const { loading, error, handleCreateTicket, message, setMessageHandler } =
+    useContext(TicketContext);
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    try {
-      onCreate(formData); // Pass form data to the parent component
-    } finally {
-      setLoading(false);
-    }
+    handleCreateTicket(formData); // Pass form data to the parent component
   }
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessageHandler(null);
+        onCancel();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message, setMessageHandler, onCancel]);
 
   return (
     <div className="mt-4">
+      {message && <p className="text-green-300 text-center">{message}</p>}
+      {error && <p className="text-sm text-red-300">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           labelText="Title"
@@ -63,7 +73,7 @@ export default function CreateTicket({ onCancel, onCreate }) {
             className="cursor-pointer py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
             disabled={loading}
           >
-            Create
+            {loading ? "Creating..." : "Create"}
           </Button>
         </div>
       </form>
