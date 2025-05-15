@@ -35,6 +35,7 @@ export default function SubmitComment({ ticketId, setTicket }) {
         comments: [
           ...prevTicket.comments,
           {
+            _id: Math.random().toString(36).substr(2, 9), // Temporary ID
             comment,
             postedBy: {
               username: user.username,
