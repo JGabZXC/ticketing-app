@@ -134,6 +134,7 @@ export default function ShowTicket() {
       }));
     }
   }
+
   return (
     <section className="px-2 mt-10">
       {message && (
@@ -190,7 +191,7 @@ export default function ShowTicket() {
             <Button
               onClick={handleEdit}
               type="button"
-              className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 mb-5 flex gap-2"
+              className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 flex gap-2"
             >
               {isEditing ? "Cancel" : "Edit"}
             </Button>
@@ -198,13 +199,13 @@ export default function ShowTicket() {
 
           {isEditing && (
             <>
-              <Button className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 mb-5 flex gap-2">
+              <Button className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 flex gap-2">
                 Save Changes
               </Button>
               <Button
                 type="button"
                 onClick={handleDelete}
-                className="px-4 py-2 cursor-pointer bg-red-600 text-slate-50 rounded-md hover:bg-red-700 hover:text-slate-50 transition-colors duration-200 mb-5 flex gap-2"
+                className="px-4 py-2 cursor-pointer bg-red-600 text-slate-50 rounded-md hover:bg-red-700 hover:text-slate-50 transition-colors duration-200 flex gap-2"
               >
                 Delete Ticket
               </Button>
@@ -213,17 +214,6 @@ export default function ShowTicket() {
 
           {user?.role === "agent" && (
             <>
-              <Select
-                labelText="Mark Status As"
-                id="status"
-                name="status"
-                onChange={(e) => handleMarkAs(e.target.value)}
-                defaultValue={ticket?.status}
-              >
-                <option value="open">Open</option>
-                <option value="in-progress">In Progress</option>
-                <option value="closed">Closed</option>
-              </Select>
               {ticket?.assignedTo ? undefined : (
                 <Button
                   type="button"
@@ -234,17 +224,43 @@ export default function ShowTicket() {
                 </Button>
               )}
               {ticket?.assignedTo?._id === user?._id && (
-                <Button
-                  type="button"
-                  onClick={unassignTo}
-                  className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 flex gap-2"
-                >
-                  Unassign me
-                </Button>
+                <>
+                  <Select
+                    labelText="Mark Status As"
+                    id="status"
+                    name="status"
+                    onChange={(e) => handleMarkAs(e.target.value)}
+                    defaultValue={ticket?.status}
+                  >
+                    <option value="open" selected={ticket?.status === "open"}>
+                      Open
+                    </option>
+                    <option
+                      value="in-progress"
+                      selected={ticket?.status === "in-progress"}
+                    >
+                      In Progress
+                    </option>
+                    <option
+                      value="closed"
+                      selected={ticket?.status === "closed"}
+                    >
+                      Closed
+                    </option>
+                  </Select>
+                  <Button
+                    type="button"
+                    onClick={unassignTo}
+                    className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 flex gap-2"
+                  >
+                    Unassign me
+                  </Button>
+                </>
               )}
             </>
           )}
         </div>
+
         {!loading && !isEditing && ticket && (
           <>
             <div className="mb-5">
@@ -270,6 +286,16 @@ export default function ShowTicket() {
                     minute: "2-digit",
                   })}
                 </span>
+                <span className="text-sm text-gray-500">
+                  Updated:{" "}
+                  {new Date(ticket?.updatedAt).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     ticket?.status === "open" ||
@@ -283,9 +309,17 @@ export default function ShowTicket() {
               </div>
             </div>
 
-            <p>{ticket?.description}</p>
+            <p>
+              {ticket?.description.split("\n").map((line, index) => (
+                <span key={index}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
           </>
         )}
+
         {!loading && isEditing && ticket && (
           <>
             <Input
@@ -310,6 +344,16 @@ export default function ShowTicket() {
                     minute: "2-digit",
                   })}
                 </span>
+                <span className="text-sm text-gray-500">
+                  Updated:{" "}
+                  {new Date(ticket?.updatedAt).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     ticket?.status === "open" ||
@@ -323,10 +367,10 @@ export default function ShowTicket() {
               </div>
             </div>
 
-            <Input
+            <textarea
               id="description"
               name="description"
-              className="break-words rounded-md border-b-2 border-b-yellow-500 focus:outline-none"
+              className="w-full break-words rounded-md border-b-2 border-b-yellow-500 focus:outline-none"
               defaultValue={ticket?.description}
             />
           </>
