@@ -8,6 +8,7 @@ export default function Toast() {
   const dispatch = useDispatch();
   const authError = useSelector((state) => state.ui.authError);
   const authSuccess = useSelector((state) => state.ui.authSuccess);
+  const ticketError = useSelector((state) => state.ui.ticketError);
 
   useEffect(() => {
     if (authError) {
@@ -25,7 +26,15 @@ export default function Toast() {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [authError, authSuccess, dispatch]);
+
+    if (ticketError) {
+      toast.error(ticketError.message);
+      const timer = setTimeout(() => {
+        dispatch(uiActions.clearTicketError());
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [authError, authSuccess, ticketError, dispatch]);
   return (
     <div>
       <ToastContainer

@@ -14,14 +14,14 @@ export default function Header() {
   }
 
   return (
-    <header className="shadow-md absolute w-full">
+    <header className="shadow-md w-full">
       <div className="p-4 flex items-center justify-between max-w-7xl mx-auto">
         {/* Logo */}
-        <h1 className="text-2xl font-bold text-gray-900">Ticketing Request</h1>
+        <h1 className="text-2xl font-bold text-slate-800">Ticketing Request</h1>
 
         {/* Hamburger Menu for Mobile */}
         <button
-          className="block lg:hidden text-gray-900 focus:outline-none z-10"
+          className="block lg:hidden text-slate-800 focus:outline-none z-10"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
@@ -49,22 +49,37 @@ export default function Header() {
           }`}
         >
           <li>
-            <NavLink to="/">Home</NavLink>
+            <NavLink
+              to="/"
+              className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+            >
+              Home
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/tickets">Ticket</NavLink>
+            <NavLink
+              to="/tickets"
+              className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+            >
+              Ticket
+            </NavLink>
           </li>
           <li>
             {isAuthenticated ? (
               <button
                 onClick={handleLogout}
                 type="button"
-                className="cursor-pointer"
+                className="cursor-pointer text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
               >
                 Log out
               </button>
             ) : (
-              <NavLink to="/login">Log in</NavLink>
+              <NavLink
+                to="/login"
+                className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+              >
+                Log in
+              </NavLink>
             )}
           </li>
         </ul>

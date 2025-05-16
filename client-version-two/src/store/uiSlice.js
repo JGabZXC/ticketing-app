@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-let notificationId = 0; // Initialize a counter for unique notification IDs
-
 const initialState = {
   authSuccess: null, // Objects
   authError: null, // Objects
+  ticketError: null, // Objects
 };
 
 const uiSlice = createSlice({
@@ -13,7 +12,6 @@ const uiSlice = createSlice({
   reducers: {
     setAuthError(state, action) {
       state.authError = {
-        id: notificationId++,
         title: action.payload.title,
         status: action.payload.status,
         message: action.payload.message,
@@ -21,7 +19,13 @@ const uiSlice = createSlice({
     },
     setAuthSuccess(state, action) {
       state.authSuccess = {
-        id: notificationId++,
+        title: action.payload.title,
+        status: action.payload.status,
+        message: action.payload.message,
+      };
+    },
+    setTicketError(state, action) {
+      state.ticketError = {
         title: action.payload.title,
         status: action.payload.status,
         message: action.payload.message,
@@ -32,6 +36,9 @@ const uiSlice = createSlice({
     },
     clearAuthSuccess(state) {
       state.authSuccess = null;
+    },
+    clearTicketError(state) {
+      state.ticketError = null;
     },
   },
 });

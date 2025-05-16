@@ -15,13 +15,17 @@ export default function HeroSection() {
         support, stay organized and in control — all in one place.`}
       </h2>
       {isAuthenticated ? (
-        <button className="px-4 py-2 mt-5 rounded-xl border-2 bg-indigo-600 text-slate-50 hover:bg-indigo-700">
-          View Tickets
-        </button>
+        <NavLink to="/tickets">
+          <button className="px-4 py-2 mt-5 rounded-xl border-2 bg-indigo-600 text-slate-50 hover:bg-indigo-700">
+            View Tickets
+          </button>
+        </NavLink>
       ) : (
-        <button className="px-4 py-2 mt-5 rounded-xl border-2 bg-indigo-600 text-slate-50 hover:bg-indigo-700">
-          <NavLink to="/login">Get Started</NavLink>
-        </button>
+        <NavLink to="/login">
+          <button className="px-4 py-2 mt-5 rounded-xl border-2 bg-indigo-600 text-slate-50 hover:bg-indigo-700">
+            Get Started
+          </button>
+        </NavLink>
       )}
     </div>
   );
