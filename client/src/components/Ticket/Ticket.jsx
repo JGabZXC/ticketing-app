@@ -24,6 +24,8 @@ export default function Ticket() {
     orderBy,
     limit,
     filterByPriority,
+    message,
+    setMessageHandler,
   } = useContext(TicketContext);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -35,7 +37,13 @@ export default function Ticket() {
 
       return () => clearTimeout(timeout);
     }
-  }, [error, setErrorHandler]);
+    if (message) {
+      const timeout = setTimeout(() => {
+        setMessageHandler(null);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, setErrorHandler, message, setMessageHandler]);
 
   function handlePageChange(direction) {
     if (direction === "next") setCurrentPageNext();
@@ -52,7 +60,7 @@ export default function Ticket() {
         <div className="flex gap-2 justify-center items-center w-full">
           <svg
             aria-hidden="true"
-            class="inline w-4 h-4 text-gray-200 animate-spin fill-green-600"
+            className="inline w-4 h-4 text-gray-200 animate-spin fill-green-600"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

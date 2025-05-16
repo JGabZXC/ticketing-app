@@ -26,7 +26,7 @@ router
   .route("/:id")
   .get(getTicket)
   .patch(isAuthenticated, updateTicket)
-  .delete(isAuthenticated, authorizedTo("admin", "superadmin"), deleteTicket);
+  .delete(isAuthenticated, deleteTicket);
 
 router
   .route("/:ticketId/comment")

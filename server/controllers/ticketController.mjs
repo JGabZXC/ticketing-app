@@ -73,7 +73,13 @@ export const updateTicket = catchAsync(async (req, res, next) => {
   const updatedTicket = await Ticket.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,
-  });
+  })
+    .populate({
+      path: "createdBy",
+    })
+    .populate({
+      path: "assignedTo",
+    });
 
   res.status(200).json({
     status: "success",
@@ -102,12 +108,22 @@ export const deleteTicket = catchAsync(async (req, res, next) => {
 
   if (!ticket) return next(new AppError("No ticket found with that ID", 404));
 
-  await Ticket.findByIdAndDelete(id);
+  if (
+    req.user.role === "admin" ||
+    req.user.role === "superadmin" ||
+    ticket.createdBy.equals(req.user._id)
+  ) {
+    await Ticket.findByIdAndDelete(id);
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
+    return res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  }
+
+  return next(
+    new AppError("You are not authorized to perform this action", 403)
+  );
 });
 
 export const getComment = catchAsync(async (req, res, next) => {

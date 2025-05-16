@@ -26,6 +26,7 @@ const TicketContext = createContext({
   message: null,
   setMessageHandler: () => {},
   updateTicketHandler: () => {},
+  deleteTicketHandler: () => {},
 });
 
 export function TicketContextProvider({ children }) {
@@ -198,6 +199,36 @@ export function TicketContextProvider({ children }) {
     }
   }
 
+  async function deleteTicketHandler(ticketId) {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `http://localhost:3000/api/v1/tickets/${ticketId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete ticket");
+      }
+
+      setTickets((prevTickets) =>
+        prevTickets.filter((ticket) => ticket._id !== ticketId)
+      );
+      setMessage("Ticket deleted successfully");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const contextValue = {
     tickets,
     selectedTicketId,
@@ -222,6 +253,7 @@ export function TicketContextProvider({ children }) {
     message,
     setMessageHandler,
     updateTicketHandler,
+    deleteTicketHandler,
   };
 
   return (

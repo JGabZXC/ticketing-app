@@ -5,6 +5,7 @@ import TicketContext from "../store/TicketContext";
 import Button from "./ui/button";
 import SubmitComment from "./ui/submitComment";
 import Input from "./ui/input";
+import Select from "./ui/select";
 
 export default function ShowTicket() {
   const { setType } = useContext(AppContext);
@@ -17,6 +18,7 @@ export default function ShowTicket() {
     updateTicketHandler,
     message,
     setMessageHandler,
+    deleteTicketHandler,
   } = useContext(TicketContext);
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -84,6 +86,54 @@ export default function ShowTicket() {
     handleEdit();
   }
 
+  function handleDelete() {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this ticket? This action cannot be undone."
+    );
+    if (confirmDelete) {
+      deleteTicketHandler(selectedTicketId);
+      setType("ticket");
+    }
+  }
+
+  function handleMarkAs(status) {
+    const confirmMark = window.confirm(
+      `Are you sure you want to mark this tiket as ${status}?`
+    );
+    if (confirmMark) {
+      updateTicketHandler(selectedTicketId, { status });
+      setTicket((prevTicket) => ({
+        ...prevTicket,
+        status,
+      }));
+    }
+  }
+
+  function assignTo() {
+    const confirmAssign = window.confirm(
+      "Are you sure you want to assign this ticket to yourself?"
+    );
+    if (confirmAssign) {
+      updateTicketHandler(selectedTicketId, { assignedTo: user._id });
+      setTicket((prevTicket) => ({
+        ...prevTicket,
+        assignedTo: user,
+      }));
+    }
+  }
+
+  function unassignTo() {
+    const confirmUnassign = window.confirm(
+      "Are you sure you want to unassign this ticket from yourself?"
+    );
+    if (confirmUnassign) {
+      updateTicketHandler(selectedTicketId, { assignedTo: null });
+      setTicket((prevTicket) => ({
+        ...prevTicket,
+        assignedTo: null,
+      }));
+    }
+  }
   return (
     <section className="px-2 mt-10">
       {message && (
@@ -114,11 +164,11 @@ export default function ShowTicket() {
         </div>
       )}
       <form onSubmit={handleSave}>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4 mb-4">
           <Button
             type="button"
             onClick={handleBack}
-            className="px-4 py-2 cursor-pointer bg-indigo-600 text-slate-50 rounded-md hover:bg-indigo-700 transition-colors duration-200 mb-5 flex gap-2"
+            className="px-4 py-2 cursor-pointer bg-indigo-600 text-slate-50 rounded-md hover:bg-indigo-700 transition-colors duration-200 flex gap-2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -147,12 +197,54 @@ export default function ShowTicket() {
           )}
 
           {isEditing && (
-            <Button className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 mb-5 flex gap-2">
-              Save Changes
-            </Button>
+            <>
+              <Button className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 mb-5 flex gap-2">
+                Save Changes
+              </Button>
+              <Button
+                type="button"
+                onClick={handleDelete}
+                className="px-4 py-2 cursor-pointer bg-red-600 text-slate-50 rounded-md hover:bg-red-700 hover:text-slate-50 transition-colors duration-200 mb-5 flex gap-2"
+              >
+                Delete Ticket
+              </Button>
+            </>
+          )}
+
+          {user?.role === "agent" && (
+            <>
+              <Select
+                labelText="Mark Status As"
+                id="status"
+                name="status"
+                onChange={(e) => handleMarkAs(e.target.value)}
+                defaultValue={ticket?.status}
+              >
+                <option value="open">Open</option>
+                <option value="in-progress">In Progress</option>
+                <option value="closed">Closed</option>
+              </Select>
+              {ticket?.assignedTo ? undefined : (
+                <Button
+                  type="button"
+                  onClick={assignTo}
+                  className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 flex gap-2"
+                >
+                  Assign me
+                </Button>
+              )}
+              {ticket?.assignedTo?._id === user?._id && (
+                <Button
+                  type="button"
+                  onClick={unassignTo}
+                  className="px-4 py-2 cursor-pointer border-2 border-indigo-600 text-gray-600 rounded-md hover:bg-indigo-700 hover:text-slate-50 transition-colors duration-200 flex gap-2"
+                >
+                  Unassign me
+                </Button>
+              )}
+            </>
           )}
         </div>
-
         {!loading && !isEditing && ticket && (
           <>
             <div className="mb-5">
@@ -160,6 +252,11 @@ export default function ShowTicket() {
                 {ticket?.title}
               </h1>
               <div className="flex items-center gap-4">
+                {ticket?.assignedTo && (
+                  <span className="text-sm text-gray-500">
+                    Assigned to: {ticket.assignedTo.fullName}
+                  </span>
+                )}
                 <span className="text-sm text-gray-500">
                   Submitted by: {ticket?.createdBy.fullName}
                 </span>
@@ -189,7 +286,6 @@ export default function ShowTicket() {
             <p>{ticket?.description}</p>
           </>
         )}
-
         {!loading && isEditing && ticket && (
           <>
             <Input

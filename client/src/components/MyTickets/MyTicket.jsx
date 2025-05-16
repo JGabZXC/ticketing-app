@@ -21,6 +21,8 @@ export default function MyTicket() {
     orderBy,
     limit,
     filterByPriority,
+    message,
+    setMessageHandler,
   } = useContext(TicketContext);
 
   function handlePageChange(direction) {
@@ -34,10 +36,17 @@ export default function MyTicket() {
         setErrorHandler(null);
       }, 3000);
     }
-  }, [error, setErrorHandler]);
+
+    if (message) {
+      setTimeout(() => {
+        setMessageHandler(null);
+      }, 3000);
+    }
+  }, [error, setErrorHandler, message, setMessageHandler]);
 
   return (
     <div className="mt-10 px-2">
+      {message && <p className="text-green-300 text-center">{message}</p>}
       {loading && (
         <div className="flex gap-2 justify-center items-center w-full">
           <svg
