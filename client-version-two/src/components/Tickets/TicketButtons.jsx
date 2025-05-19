@@ -1,11 +1,6 @@
 import { useSelector } from "react-redux";
 
-export default function TicketButtons({
-  setOrderBy,
-  setLimit,
-  setPriority,
-  setPage,
-}) {
+export default function TicketButtons({ setOrderBy, setLimit, setPriority }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   function handleOrderByChange(e) {
@@ -32,8 +27,8 @@ export default function TicketButtons({
             Order by
           </label>
           <select className="text-slate-400" onChange={handleOrderByChange}>
-            <option value="createdAt">Newest</option>
-            <option value="-createdAt">Oldest</option>
+            <option value="-createdAt">Newest</option>
+            <option value="createdAt">Oldest</option>
           </select>
         </div>
         <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
