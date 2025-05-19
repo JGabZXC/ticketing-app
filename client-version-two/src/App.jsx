@@ -9,19 +9,36 @@ import TicketsPage from "./pages/TicketsPage";
 
 import RedirectIfAuthenticated from "./components/RedirectIfAuthenticated";
 import Toast from "./components/Toast/Toast";
+import TicketDetailPage from "./pages/TicketDetailPage";
+import TicketRoot from "./pages/TicketRoot";
+import ErrorPage from "./pages/ErrorPage";
+
+import { loader as ticketLoader } from "./components/Tickets/TicketItem";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
-      { path: "/", element: <HomePage /> },
+      { index: true, element: <HomePage /> },
       {
-        path: "/tickets",
-        element: <TicketsPage />,
+        path: "tickets",
+        element: <TicketRoot />,
+        children: [
+          {
+            index: true,
+            element: <TicketsPage />,
+          },
+          {
+            path: ":ticketId",
+            element: <TicketDetailPage />,
+            loader: ticketLoader,
+          },
+        ],
       },
       {
-        path: "/login",
+        path: "login",
         element: <Login />,
       },
     ],

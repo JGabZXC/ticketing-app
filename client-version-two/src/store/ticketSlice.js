@@ -1,9 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { uiActions } from "./uiSlice";
 
 const initialState = {
   tickets: [],
   selectedTicketId: null,
+  totalPages: null,
+  loading: false,
 };
 
 const ticketSlice = createSlice({
@@ -32,33 +34,57 @@ const ticketSlice = createSlice({
         (ticket) => ticket.id !== action.payload
       );
     },
+    setSelectedTicketId(state, action) {
+      state.selectedTicketId = action.payload;
+    },
+    setTotalPages(state, action) {
+      state.totalPages = action.payload;
+    },
+    setLoading(state, action) {
+      state.loading = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchTickets.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchTickets.fulfilled, (state, action) => {
+      state.loading = false;
+      state.tickets = action.payload.data.tickets;
+      state.totalPages = action.payload.totalPages;
+    });
+    builder.addCase(fetchTickets.rejected, (state, action) => {
+      state.loading = false;
+      state.tickets = [];
+      state.totalPages = null;
+      uiActions.setTicketError({
+        title: "Error",
+        status: "error",
+        message: action.payload,
+      });
+    });
   },
 });
 
-export const fetchTickets = () => {
-  return async (dispatch) => {
-    const getTickets = async () => {
-      const response = await fetch("http://localhost:3000/api/v1/tickets");
-      if (!response.ok) {
-        throw new Error("Could not fetch tickets!");
-      }
-      return await response.json();
-    };
-
+export const fetchTickets = createAsyncThunk(
+  "ticket/fetchTickets",
+  async ({ orderBy, limit, priority, page }, { rejectWithValue }) => {
     try {
-      const tickets = await getTickets();
-      dispatch(ticketActions.setTickets(tickets.data.tickets));
+      let url = "";
+      if (priority === "all") {
+        url = `http://localhost:3000/api/v1/tickets?page=${page}&limit=${limit}&&sort=${orderBy}`;
+      } else {
+        url = `http://localhost:3000/api/v1/tickets/priority/${priority}?page=${page}&limit=${limit}&&sort=${orderBy}`;
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Failed to fetch tickets");
+      return await response.json();
     } catch (error) {
-      dispatch(
-        uiActions.setTicketError({
-          title: "Error",
-          status: 500,
-          message: error.message,
-        })
-      );
+      return rejectWithValue(error.message || "Failed fetching tickets");
     }
-  };
-};
+  }
+);
 
 export const ticketActions = ticketSlice.actions;
 export default ticketSlice.reducer;

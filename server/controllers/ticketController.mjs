@@ -226,6 +226,8 @@ export const getPriority = catchAsync(async (req, res, next) => {
 
   matchStage.createdBy;
 
+  console.log("matchStage", matchStage);
+
   const result = await Ticket.aggregate([
     {
       $match: matchStage,
