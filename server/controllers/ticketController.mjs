@@ -9,6 +9,8 @@ import { validateComment } from "../utils/validate.js";
 export const getAllTickets = catchAsync(async (req, res, next) => {
   const filter = {};
   if (req.params.userId) filter.createdBy = req.params.userId;
+  if (req.query.priority && req.query.priority !== "all")
+    filter.priority = req.query.priority;
 
   const features = new Features(Ticket.find(filter), req.query)
     .paginate()

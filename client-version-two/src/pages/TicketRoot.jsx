@@ -1,10 +1,9 @@
 import { Outlet, useNavigation } from "react-router-dom";
-import TicketButtons from "../components/Tickets/TicketButtons";
+
 export default function TicketRoot() {
   const navigation = useNavigation();
   return (
-    <section className="p-4 mt-10">
-      <TicketButtons />
+    <>
       {navigation.state === "loading" ? (
         <div role="status" class="flex justify-center mt-10">
           <div className="flex items-center gap-2">
@@ -30,6 +29,6 @@ export default function TicketRoot() {
       ) : (
         <Outlet />
       )}
-    </section>
+    </>
   );
 }

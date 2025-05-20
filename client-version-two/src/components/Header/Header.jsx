@@ -58,7 +58,7 @@ export default function Header() {
           </li>
           <li>
             <NavLink
-              to="/tickets?page=1&limit=20&sort=-createdAt"
+              to="/tickets?page=1&limit=20&sort=-createdAt&priorty=all"
               className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
             >
               Ticket

@@ -1,9 +1,13 @@
-import { Link, Form, useSubmit } from "react-router-dom";
+import { Link, Form, useSubmit, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function TicketButtons() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const submit = useSubmit();
+  const [searchParams] = useSearchParams();
+  const orderBy = searchParams.get("sort") || "-createdAt";
+  const limit = searchParams.get("limit") || 20;
+  const priority = searchParams.get("priority") || "all";
 
   function handleOrderByChange(e) {
     const orderBy = e.target.value;
@@ -25,6 +29,7 @@ export default function TicketButtons() {
     params.set("priority", priority);
     submit(params, { method: "GET" });
   }
+
   return (
     <div className="flex justify-between items-center mb-4 flex-col lg:flex-row">
       {isAuthenticated && (
@@ -42,8 +47,12 @@ export default function TicketButtons() {
             Order by
           </label>
           <select className="text-slate-400" onChange={handleOrderByChange}>
-            <option value="-createdAt">Newest</option>
-            <option value="createdAt">Oldest</option>
+            <option value="-createdAt" selected={orderBy === "-createdAt"}>
+              Newest
+            </option>
+            <option value="createdAt" selected={orderBy === "createdAt"}>
+              Oldest
+            </option>
           </select>
         </div>
         <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
@@ -51,9 +60,15 @@ export default function TicketButtons() {
             Limit by
           </label>
           <select className="text-slate-400" onChange={handleLimitChange}>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
+            <option value="20" selected={limit === "20"}>
+              20
+            </option>
+            <option value="50" selected={limit === "50"}>
+              50
+            </option>
+            <option value="100" selected={limit === "100"}>
+              100
+            </option>
           </select>
         </div>
         <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
@@ -61,10 +76,18 @@ export default function TicketButtons() {
             Priority
           </label>
           <select className="text-slate-400" onChange={handlePriorityChange}>
-            <option value="all">All</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="all" selected={priority === "all"}>
+              All
+            </option>
+            <option value="low" selected={priority === "low"}>
+              Low
+            </option>
+            <option value="medium" selected={priority === "medium"}>
+              Medium
+            </option>
+            <option value="high" selected={priority === "high"}>
+              High
+            </option>
           </select>
         </div>
       </Form>
