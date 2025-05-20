@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function TicketButtons({ setOrderBy, setLimit, setPriority }) {
@@ -17,9 +18,13 @@ export default function TicketButtons({ setOrderBy, setLimit, setPriority }) {
   return (
     <div className="flex justify-between items-center mb-4 flex-col lg:flex-row">
       {isAuthenticated && (
-        <button className="cursor-pointer px-4 py-2 rounded-xl border-2 text-sm lg:text-md bg-indigo-600 text-slate-50 hover:bg-indigo-700">
-          Create Ticket
-        </button>
+        <>
+          <Link to="new">
+            <button className="cursor-pointer px-4 py-2 rounded-xl border-2 text-sm lg:text-md bg-indigo-600 text-slate-50 hover:bg-indigo-700">
+              Create Ticket
+            </button>
+          </Link>
+        </>
       )}
       <div className="flex gap-4 items-center text-sm lg:text-md">
         <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">

@@ -1,16 +1,39 @@
 export default function TicketItemMessage({ ticket }) {
   const comments = ticket.comments;
+  const size = 10; // Number of comments to display per page
+  const newComments = [];
+  for (let i = 0; i < comments.length; i += size) {
+    const pageComments = comments.slice(i, i + size);
+    newComments.push(pageComments);
+  }
+
   return (
     <section className="p-4 max-w-7xl mx-auto">
       {comments.length > 0 ? (
         <>
-          <h1>Ticket Message Goes Here</h1>
+          <h2 className="text-slate-700 font-medium mb-5">
+            Comments ({comments.length})
+          </h2>
           <ul>
-            <li>
-              <p>Ticket username | User</p>
-              <p>May 22, 2025 8:23 AM</p>
-              <p>Ticket Message</p>
-            </li>
+            {comments.map((comment) => (
+              <li className="mb-2">
+                <div className="flex gap-2">
+                  <span className="text-slate-600 font-medium">
+                    {comment.postedBy.fullName}
+                  </span>
+                  <span className="text-slate-600">
+                    {new Date(ticket.createdAt).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+                <p className="text-slate-600">{comment.comment}</p>
+              </li>
+            ))}
           </ul>
         </>
       ) : (

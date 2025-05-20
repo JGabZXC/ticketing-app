@@ -13,7 +13,7 @@ const ticketSchema = new mongoose.Schema(
       type: String,
       required: [true, "Description is required"],
       trim: true,
-      maxlength: [500, "Description cannot exceed 500 characters"],
+      maxlength: [2000, "Description cannot exceed 2000 characters"],
       minlength: [10, "Description must be at least 10 characters"],
     },
     status: {
@@ -46,7 +46,10 @@ const ticketSchema = new mongoose.Schema(
     },
     comments: [
       {
-        comment: String,
+        comment: {
+          type: String,
+          maxlength: [1000, "Comment cannot exceed 1000 characters"],
+        },
         postedBy: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
