@@ -7,8 +7,6 @@ export default function TicketItem({ ticket }) {
     (state) => state.tickets?.selectedTicketId
   );
 
-  console.log("Selected Ticket ID:", selectedTicketId);
-
   return (
     <>
       <TicketItemContent ticket={ticket} />

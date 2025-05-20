@@ -1,7 +1,9 @@
 import Span from "../ui/Span";
+import TicketItemContentButtons from "./TicketItemContentButtons";
 export default function TicketItemContent({ ticket }) {
   return (
     <section className="p-4 max-w-7xl mx-auto">
+      <TicketItemContentButtons userId={ticket.createdBy._id} />
       <h1 className="text-xl font-semibold text-slate-800">{ticket.title}</h1>
       <div className="flex flex-col gap-2 mb-5">
         <div className="flex flex-col gap-2 md:flex-row">

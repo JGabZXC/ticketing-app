@@ -14,6 +14,10 @@ import TicketRoot from "./pages/TicketRoot";
 import ErrorPage from "./pages/ErrorPage";
 
 import { loader as ticketLoader } from "./components/Tickets/TicketItem";
+import {
+  action as ticketNewAction,
+  actionDelete as ticketDeleteAction,
+} from "./components/Tickets/TicketForm";
 import TicketNew from "./pages/TicketNew";
 
 const router = createBrowserRouter([
@@ -35,10 +39,12 @@ const router = createBrowserRouter([
             path: ":ticketId",
             element: <TicketDetailPage />,
             loader: ticketLoader,
+            action: ticketDeleteAction,
           },
           {
             path: "new",
             element: <TicketNew />,
+            action: ticketNewAction,
           },
         ],
       },

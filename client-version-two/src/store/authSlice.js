@@ -69,7 +69,6 @@ export const requestLogin = (username, password) => {
     try {
       dispatch(authActions.setLoading(true));
       const data = await sendRequest();
-      console.log(data);
       dispatch(authActions.login({ user: data.data.user }));
       dispatch(
         uiActions.setAuthSuccess({

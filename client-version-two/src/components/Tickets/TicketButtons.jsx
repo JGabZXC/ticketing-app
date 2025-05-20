@@ -20,7 +20,7 @@ export default function TicketButtons({ setOrderBy, setLimit, setPriority }) {
       {isAuthenticated && (
         <>
           <Link to="new">
-            <button className="cursor-pointer px-4 py-2 rounded-xl border-2 text-sm lg:text-md bg-indigo-600 text-slate-50 hover:bg-indigo-700">
+            <button className="cursor-pointer px-4 py-2 rounded-xl border-2 text-sm lg:text-md bg-indigo-600 text-slate-50 hover:bg-indigo-700 transition-all duration-200">
               Create Ticket
             </button>
           </Link>

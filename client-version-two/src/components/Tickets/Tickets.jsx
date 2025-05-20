@@ -14,9 +14,6 @@ export default function Tickets() {
   const [priority, setPriority] = useState("all");
   const [page, setPage] = useState(1);
 
-  console.log(tickets);
-  console.log("render");
-
   useEffect(() => {
     dispatch(fetchTickets({ orderBy, limit, priority, page }));
   }, [dispatch, orderBy, limit, priority, page]);
