@@ -18,6 +18,7 @@ import {
   action as ticketNewAction,
   actionDelete as ticketDeleteAction,
 } from "./components/Tickets/TicketForm";
+import { loader as ticketsLoader } from "./components/Tickets/Tickets";
 import TicketNew from "./pages/TicketNew";
 
 const router = createBrowserRouter([
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <TicketsPage />,
+            loader: ticketsLoader,
           },
           {
             path: ":ticketId",

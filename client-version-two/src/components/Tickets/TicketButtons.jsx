@@ -1,19 +1,29 @@
-import { Link } from "react-router-dom";
+import { Link, Form, useSubmit } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function TicketButtons({ setOrderBy, setLimit, setPriority }) {
+export default function TicketButtons() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const submit = useSubmit();
 
   function handleOrderByChange(e) {
-    setOrderBy(e.target.value);
+    const orderBy = e.target.value;
+    const params = new URLSearchParams(window.location.search);
+    params.set("sort", orderBy);
+    submit(params, { method: "GET" });
   }
 
   function handleLimitChange(e) {
-    setLimit(e.target.value);
+    const limit = e.target.value;
+    const params = new URLSearchParams(window.location.search);
+    params.set("limit", limit);
+    submit(params, { method: "GET" });
   }
 
   function handlePriorityChange(e) {
-    setPriority(e.target.value);
+    const priority = e.target.value;
+    const params = new URLSearchParams(window.location.search);
+    params.set("priority", priority);
+    submit(params, { method: "GET" });
   }
   return (
     <div className="flex justify-between items-center mb-4 flex-col lg:flex-row">
@@ -26,7 +36,7 @@ export default function TicketButtons({ setOrderBy, setLimit, setPriority }) {
           </Link>
         </>
       )}
-      <div className="flex gap-4 items-center text-sm lg:text-md">
+      <Form className="flex gap-4 items-center text-sm lg:text-md">
         <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
           <label htmlFor="" className="font-semibold text-slate-700">
             Order by
@@ -57,7 +67,7 @@ export default function TicketButtons({ setOrderBy, setLimit, setPriority }) {
             <option value="high">High</option>
           </select>
         </div>
-      </div>
+      </Form>
     </div>
   );
 }

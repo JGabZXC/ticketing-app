@@ -4,8 +4,7 @@ import { uiActions } from "./uiSlice";
 const initialState = {
   tickets: [],
   selectedTicketId: null,
-  totalPages: null,
-  loading: false,
+  page: 1,
 };
 
 const ticketSlice = createSlice({
@@ -42,6 +41,9 @@ const ticketSlice = createSlice({
     },
     setLoading(state, action) {
       state.loading = action.payload;
+    },
+    setPage(state, action) {
+      state.page = action.payload;
     },
   },
   extraReducers: (builder) => {

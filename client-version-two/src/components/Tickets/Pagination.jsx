@@ -1,19 +1,35 @@
-import { useSelector } from "react-redux";
-export default function Pagination({ page, setPage }) {
-  const totalPages = useSelector((state) => state.tickets?.totalPages);
+import { useSubmit } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { ticketActions } from "../../store/ticketSlice";
+export default function Pagination({ currentPage, totalPages }) {
+  const submit = useSubmit();
+  const dispatch = useDispatch();
 
-  if (page > totalPages) setPage(1);
+  if (currentPage > totalPages) {
+    dispatch(ticketActions.setPage(1));
+    const page = 1;
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", page);
+    console.log("Submitted");
+    submit(params, { method: "GET" });
+  }
 
   function handlePageChange(newPage) {
-    setPage(newPage);
+    dispatch(ticketActions.setPage(newPage));
+    const page = newPage;
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", page);
+    submit(params, { method: "GET" });
   }
+
+  console.log("Main:", currentPage);
 
   return (
     <div className="flex gap-4 justify-center mt-4">
       <button
         type="button"
-        onClick={() => handlePageChange(page - 1)}
-        disabled={page === 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -31,12 +47,12 @@ export default function Pagination({ page, setPage }) {
         </svg>
       </button>
       <span className="text-slate-600">
-        Pages {page} of {totalPages}
+        Pages {currentPage} of {totalPages}
       </span>
       <button
         type="button"
-        onClick={() => handlePageChange(page + 1)}
-        disabled={page === totalPages}
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

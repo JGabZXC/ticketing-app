@@ -17,7 +17,7 @@ export default function Header() {
     <header className="shadow-md w-full">
       <div className="p-4 flex items-center justify-between max-w-7xl mx-auto">
         {/* Logo */}
-        <h1 className="text-2xl font-bold text-slate-800">Ticketing Request</h1>
+        <h1 className="text-2xl font-bold text-slate-800">TicketFlow</h1>
 
         {/* Hamburger Menu for Mobile */}
         <button
@@ -58,7 +58,7 @@ export default function Header() {
           </li>
           <li>
             <NavLink
-              to="/tickets"
+              to="/tickets?page=1&limit=20&sort=-createdAt"
               className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
             >
               Ticket

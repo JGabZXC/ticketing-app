@@ -6,7 +6,7 @@ export default function HeroSection() {
   const user = useSelector((state) => state.auth.user);
   return (
     <div className="text-center max-w-[450px] mx-auto my-0 mt-20">
-      <h1 className="text-6xl font-bold text-slate-800">Ticketing App</h1>
+      <h1 className="text-6xl font-bold text-slate-800">TicketFlow</h1>
       <h2 className="text-md font-medium mt-5 text-slate-600">
         {isAuthenticated
           ? `Welcome back, ${user.fullName}!`
