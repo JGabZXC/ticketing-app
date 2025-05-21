@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { ticketActions } from "../../store/ticketSlice";
 
 export default function CardTicket({ ticket }) {
-  const dispatch = useDispatch();
   let classes = "relative p-4 rounded-2xl border-1 shadow-sm lg:shadow-md";
 
   if (ticket.priority === "high") {
@@ -15,7 +12,7 @@ export default function CardTicket({ ticket }) {
   }
 
   return (
-    <Link to={ticket._id} className={classes}>
+    <Link to={`/tickets/${ticket._id}`} className={classes}>
       <h2 className="font-semibold text-slate-700 text-lg lg:text-2xl break-all">
         {ticket.title}
       </h2>

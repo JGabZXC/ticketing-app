@@ -58,7 +58,7 @@ export default function TicketForm() {
           >
             {isSubmitting ? "Creating..." : "Submit"}
           </button>
-          <Link to="..">
+          <Link to={-1}>
             <button
               type="button"
               className="border-2 border-indigo-600 text-sm text-slate-700 px-4 py-2 rounded-xl hover:bg-indigo-700 hover:text-slate-50 transition-all duration-200"

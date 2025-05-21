@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Header() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu toggle
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
@@ -64,6 +65,16 @@ export default function Header() {
               Ticket
             </NavLink>
           </li>
+          {isAuthenticated && (
+            <li>
+              <NavLink
+                to={`/tickets/myticket/${user._id}`}
+                className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+              >
+                My Ticket
+              </NavLink>
+            </li>
+          )}
           <li>
             {isAuthenticated ? (
               <button

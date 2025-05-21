@@ -1,5 +1,5 @@
 import { Await, useLoaderData } from "react-router-dom";
-import TicketItem from "../components/Tickets/TicketItem";
+import TicketItem from "../components/Tickets/TicketItem/TicketItem";
 import { Suspense } from "react";
 import Loading from "../components/Loading/Loading";
 

@@ -34,7 +34,7 @@ export default function TicketButtons() {
     <div className="flex justify-between items-center mb-4 flex-col lg:flex-row">
       {isAuthenticated && (
         <>
-          <Link to="new">
+          <Link to="/tickets/new">
             <button className="cursor-pointer px-4 py-2 rounded-xl border-2 text-sm lg:text-md bg-indigo-600 text-slate-50 hover:bg-indigo-700 transition-all duration-200">
               Create Ticket
             </button>

@@ -32,7 +32,7 @@ async function loadTickets({ request, params }) {
   let urlReq = `http://localhost:3000/api/v1/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
 
   if (params.userId) {
-    urlReq = `http://localhost:3000//api/v1/users/${params.userId}/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
+    urlReq = `http://localhost:3000/api/v1/users/${params.userId}/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
   }
 
   const response = await fetch(urlReq);

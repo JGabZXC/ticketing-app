@@ -1,4 +1,4 @@
-import Span from "../ui/Span";
+import Span from "../../ui/Span";
 import TicketItemContentButtons from "./TicketItemContentButtons";
 export default function TicketItemContent({ ticket }) {
   return (

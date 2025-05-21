@@ -9,7 +9,7 @@ import {
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useSubmit, Link } from "react-router-dom";
-import Modal from "../Modal/Modal";
+import Modal from "../../Modal/Modal";
 import { useSelector } from "react-redux";
 export default function TicketItemContentButtons({ userId }) {
   const [isOpen, setIsOpen] = useState(false);
