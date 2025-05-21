@@ -13,12 +13,12 @@ import TicketDetailPage from "./pages/TicketDetailPage";
 import TicketRoot from "./pages/TicketRoot";
 import ErrorPage from "./pages/ErrorPage";
 
-import { loader as ticketLoader } from "./components/Tickets/TicketItem";
 import {
   action as ticketNewAction,
   actionDelete as ticketDeleteAction,
 } from "./components/Tickets/TicketForm";
-import { loader as ticketsLoader } from "./components/Tickets/Tickets";
+import { loader as ticketsLoader } from "./pages/TicketsPage";
+import { loader as ticketLoader } from "./pages/TicketDetailPage";
 import TicketNew from "./pages/TicketNew";
 
 const router = createBrowserRouter([
@@ -36,6 +36,10 @@ const router = createBrowserRouter([
             index: true,
             element: <TicketsPage />,
             loader: ticketsLoader,
+            shouldRevalidate: ({ currentUrl, nextUrl }) => {
+              // Force revalidation when query params change
+              return currentUrl.search !== nextUrl.search;
+            },
           },
           {
             path: ":ticketId",

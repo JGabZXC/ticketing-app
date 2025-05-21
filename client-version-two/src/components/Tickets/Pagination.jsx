@@ -10,7 +10,6 @@ export default function Pagination({ currentPage, totalPages }) {
     const page = 1;
     const params = new URLSearchParams(window.location.search);
     params.set("page", page);
-    console.log("Submitted");
     submit(params, { method: "GET" });
   }
 
@@ -21,8 +20,6 @@ export default function Pagination({ currentPage, totalPages }) {
     params.set("page", page);
     submit(params, { method: "GET" });
   }
-
-  console.log("Main:", currentPage);
 
   return (
     <div className="flex gap-4 justify-center mt-4">

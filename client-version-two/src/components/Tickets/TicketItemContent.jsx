@@ -30,7 +30,14 @@ export default function TicketItemContent({ ticket }) {
           })}
         </Span>
       </div>
-      <p className="text-slate-600">{ticket.description}</p>
+      <p className="text-slate-600">
+        {ticket.description.split("\n").map((line) => (
+          <>
+            {line}
+            <br />
+          </>
+        ))}
+      </p>
     </section>
   );
 }

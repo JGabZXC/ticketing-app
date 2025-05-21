@@ -34,10 +34,10 @@ export default function TicketItemContentButtons({ userId }) {
   return (
     <>
       <Modal isOpen={isOpen} close={closeModal}>
-        <DialogTitle as="h3" className="text-base/7 font-medium text-white">
+        <DialogTitle as="h3" className="text-base/7 font-medium text-slate-50">
           Delete Ticket
         </DialogTitle>
-        <p className="mt-2 text-sm/6 text-white/50">
+        <p className="mt-2 text-sm/6 text-slate-100">
           Are you sure you want to delete this ticket? This action can not be
           undone.
         </p>
@@ -49,13 +49,14 @@ export default function TicketItemContentButtons({ userId }) {
             Yes
           </Button>
           <Button
-            className="inline-flex items-center gap-2 rounded-md border-2 border-slate-500 px-4 py-2 text-sm font-semibold text-slate-50 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-slate-500 data-open:bg-gray-700"
+            className="inline-flex items-center gap-2 rounded-md  px-4 py-2 text-sm font-semibold text-slate-50 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-slate-200 data-hover:text-slate-500 data-open:bg-gray-700"
             onClick={closeModal}
           >
             Cancel
           </Button>
         </div>
       </Modal>
+
       <div className="flex justify-between items-center mb-5">
         <Link to=".." className="text-slate-50">
           <button className="rounded-md px-4 py-1 text-sm bg-indigo-600 flex gap-2 items-center hover:bg-indigo-700 transition-all duration-200">

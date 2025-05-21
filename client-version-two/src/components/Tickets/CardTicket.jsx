@@ -14,12 +14,8 @@ export default function CardTicket({ ticket }) {
     classes += " border-slate-200";
   }
 
-  function setTicketId() {
-    dispatch(ticketActions.setSelectedTicketId(ticket._id));
-  }
-
   return (
-    <Link to={ticket._id} className={classes} onClick={setTicketId}>
+    <Link to={ticket._id} className={classes}>
       <h2 className="font-semibold text-slate-700 text-lg lg:text-2xl break-all">
         {ticket.title}
       </h2>

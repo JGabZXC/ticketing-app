@@ -31,7 +31,14 @@ export default function TicketItemMessage({ ticket }) {
                     })}
                   </span>
                 </div>
-                <p className="text-slate-600">{comment.comment}</p>
+                <p className="text-slate-600">
+                  {comment.comment.split("\n").map((line) => (
+                    <>
+                      {line}
+                      <br />
+                    </>
+                  ))}
+                </p>
               </li>
             ))}
           </ul>
