@@ -11,6 +11,7 @@ export default function Header() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   function handleLogout() {
+    setIsMenuOpen(false); // Close the menu on logout
     dispatch(requestLogout());
   }
 
@@ -50,29 +51,35 @@ export default function Header() {
           }`}
         >
           <li>
-            <NavLink
-              to="/"
-              className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
-            >
-              Home
-            </NavLink>
+            <button onClick={() => setIsMenuOpen(false)}>
+              <NavLink
+                to="/"
+                className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+              >
+                Home
+              </NavLink>
+            </button>
           </li>
           <li>
-            <NavLink
-              to="/tickets?page=1&limit=20&sort=-createdAt&priorty=all"
-              className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
-            >
-              Ticket
-            </NavLink>
+            <button onClick={() => setIsMenuOpen(false)}>
+              <NavLink
+                to="/tickets?page=1&limit=20&sort=-createdAt&priorty=all"
+                className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+              >
+                Ticket
+              </NavLink>
+            </button>
           </li>
           {isAuthenticated && (
             <li>
-              <NavLink
-                to={`/tickets/myticket/${user._id}`}
-                className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
-              >
-                My Ticket
-              </NavLink>
+              <button onClick={() => setIsMenuOpen(false)}>
+                <NavLink
+                  to={`/tickets/myticket/${user._id}`}
+                  className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+                >
+                  My Ticket
+                </NavLink>
+              </button>
             </li>
           )}
           <li>
@@ -85,12 +92,14 @@ export default function Header() {
                 Log out
               </button>
             ) : (
-              <NavLink
-                to="/login"
-                className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
-              >
-                Log in
-              </NavLink>
+              <button onClick={() => setIsMenuOpen(false)}>
+                <NavLink
+                  to="/auth?type=login"
+                  className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+                >
+                  Log in
+                </NavLink>
+              </button>
             )}
           </li>
         </ul>

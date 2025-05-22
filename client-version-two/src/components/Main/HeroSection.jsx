@@ -21,7 +21,7 @@ export default function HeroSection() {
           </button>
         </NavLink>
       ) : (
-        <NavLink to="/login">
+        <NavLink to="/auth?type=login">
           <button className="px-4 py-2 mt-5 rounded-xl border-2 bg-indigo-600 text-slate-50 hover:bg-indigo-700">
             Get Started
           </button>

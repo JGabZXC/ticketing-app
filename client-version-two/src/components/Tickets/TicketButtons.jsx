@@ -31,7 +31,7 @@ export default function TicketButtons({ totalPages }) {
   }
 
   return (
-    <div className="flex justify-between items-center mb-4 flex-col lg:flex-row">
+    <div className="max-w-7xl mx-auto flex justify-between items-center mb-4 flex-col lg:flex-row gap-2">
       {isAuthenticated && (
         <>
           <Link to="/tickets/new">
@@ -42,58 +42,64 @@ export default function TicketButtons({ totalPages }) {
         </>
       )}
 
-      {totalPages !== 0 && (
-        <Form className="flex gap-4 items-center text-sm lg:text-md">
-          <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
-            <label htmlFor="" className="font-semibold text-slate-700">
-              Order by
-            </label>
-            <select className="text-slate-400" onChange={handleOrderByChange}>
-              <option value="-createdAt" selected={orderBy === "-createdAt"}>
-                Newest
-              </option>
-              <option value="createdAt" selected={orderBy === "createdAt"}>
-                Oldest
-              </option>
-            </select>
-          </div>
-          <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
-            <label htmlFor="" className="font-semibold text-slate-700">
-              Limit by
-            </label>
-            <select className="text-slate-400" onChange={handleLimitChange}>
-              <option value="20" selected={limit === "20"}>
-                20
-              </option>
-              <option value="50" selected={limit === "50"}>
-                50
-              </option>
-              <option value="100" selected={limit === "100"}>
-                100
-              </option>
-            </select>
-          </div>
-          <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
-            <label htmlFor="" className="font-semibold text-slate-700">
-              Priority
-            </label>
-            <select className="text-slate-400" onChange={handlePriorityChange}>
-              <option value="all" selected={priority === "all"}>
-                All
-              </option>
-              <option value="low" selected={priority === "low"}>
-                Low
-              </option>
-              <option value="medium" selected={priority === "medium"}>
-                Medium
-              </option>
-              <option value="high" selected={priority === "high"}>
-                High
-              </option>
-            </select>
-          </div>
-        </Form>
-      )}
+      <Form className="flex gap-4 items-center text-sm lg:text-md">
+        <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
+          <label htmlFor="" className="font-semibold text-slate-700">
+            Order by
+          </label>
+          <select
+            className="text-slate-400"
+            onChange={handleOrderByChange}
+            disabled={totalPages === 0}
+          >
+            <option value="-createdAt" defaultValue={orderBy === "-createdAt"}>
+              Newest
+            </option>
+            <option value="createdAt" defaultValue={orderBy === "createdAt"}>
+              Oldest
+            </option>
+          </select>
+        </div>
+        <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
+          <label htmlFor="" className="font-semibold text-slate-700">
+            Limit by
+          </label>
+          <select
+            className="text-slate-400"
+            onChange={handleLimitChange}
+            disabled={totalPages === 0}
+          >
+            <option value="20" defaultValue={limit === "20"}>
+              20
+            </option>
+            <option value="50" defaultValue={limit === "50"}>
+              50
+            </option>
+            <option value="100" defaultValue={limit === "100"}>
+              100
+            </option>
+          </select>
+        </div>
+        <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
+          <label htmlFor="" className="font-semibold text-slate-700">
+            Priority
+          </label>
+          <select className="text-slate-400" onChange={handlePriorityChange}>
+            <option value="all" defaultValue={priority === "all"}>
+              All
+            </option>
+            <option value="low" defaultValue={priority === "low"}>
+              Low
+            </option>
+            <option value="medium" defaultValue={priority === "medium"}>
+              Medium
+            </option>
+            <option value="high" defaultValue={priority === "high"}>
+              High
+            </option>
+          </select>
+        </div>
+      </Form>
     </div>
   );
 }

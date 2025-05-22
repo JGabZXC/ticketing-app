@@ -20,7 +20,7 @@ export default function Tickets({ tickets, totalPages }) {
   }, [location.search]);
 
   return (
-    <section className="p-4 mt-10">
+    <section className="p-4 mt-5">
       <TicketButtons totalPages={totalPages} />
 
       {tickets.length !== 0 ? (
@@ -28,11 +28,13 @@ export default function Tickets({ tickets, totalPages }) {
           {isLoading ? (
             <Loading />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-              {tickets.length > 0 &&
-                tickets.map((ticket) => (
-                  <CardTicket key={ticket._id} ticket={ticket} />
-                ))}
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+                {tickets.length > 0 &&
+                  tickets.map((ticket) => (
+                    <CardTicket key={ticket._id} ticket={ticket} />
+                  ))}
+              </div>
             </div>
           )}
         </>
@@ -47,7 +49,7 @@ export default function Tickets({ tickets, totalPages }) {
         </>
       )}
 
-      {totalPages !== 0 && (
+      {totalPages !== 0 && totalPages !== 1 && (
         <Pagination currentPage={currentPage} totalPages={totalPages} />
       )}
     </section>

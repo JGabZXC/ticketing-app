@@ -98,6 +98,8 @@ export const requestLogout = () => {
         credentials: "include",
       });
 
+      console.log(response);
+
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(

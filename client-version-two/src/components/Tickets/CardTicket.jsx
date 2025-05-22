@@ -13,14 +13,7 @@ export default function CardTicket({ ticket }) {
 
   return (
     <Link to={`/tickets/${ticket._id}`} className={classes}>
-      <h2 className="font-semibold text-slate-700 text-lg lg:text-2xl break-all">
-        {ticket.title}
-      </h2>
-      <p className="text-slate-500 text-sm lg:text-md h-[9rem]">
-        {ticket.description.slice(0, 200)}{" "}
-        {ticket.description.length >= 200 ? "..." : ""}
-      </p>
-      <div className="flex items-center justify-between absolute bottom-2 left-4 right-4">
+      <div className="flex items-center justify-between">
         <span className="text-slate-400 text-xs">
           Created at:{" "}
           {new Date(ticket.createdAt).toLocaleString("en-US", {
@@ -41,6 +34,14 @@ export default function CardTicket({ ticket }) {
           {ticket.status}
         </span>
       </div>
+      <h2 className="font-semibold text-slate-700 text-lg lg:text-2xl break-all">
+        {ticket.title.slice(0, 50)}
+        {ticket.title.length > 50 ? "..." : ""}
+      </h2>
+      <p className="text-slate-500 text-sm lg:text-md h-[7.5rem] overflow-hidden">
+        {ticket.description.slice(0, 300)}
+        {ticket.description.length > 300 ? "..." : ""}
+      </p>
     </Link>
   );
 }

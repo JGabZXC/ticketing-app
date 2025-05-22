@@ -7,7 +7,6 @@ import Login from "./components/Login/Login";
 import HomePage from "./pages/HomePage";
 import TicketsPage from "./pages/TicketsPage";
 
-import RedirectIfAuthenticated from "./components/RedirectIfAuthenticated";
 import Toast from "./components/Toast/Toast";
 import TicketDetailPage from "./pages/TicketDetailPage";
 import TicketRoot from "./pages/TicketRoot";
@@ -15,12 +14,14 @@ import ErrorPage from "./pages/ErrorPage";
 
 import {
   action as ticketNewAction,
-  actionDelete as ticketDeleteAction,
+  actionDeleteandPost,
 } from "./components/Tickets/TicketForm";
 import { loader as ticketsLoader } from "./pages/TicketsPage";
 import { loader as ticketLoader } from "./pages/TicketDetailPage";
 import TicketNew from "./pages/TicketNew";
 import MyTicket from "./pages/MyTicket";
+
+import { action as registerAction } from "./components/Login/Register";
 
 const router = createBrowserRouter([
   {
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
             path: ":ticketId",
             element: <TicketDetailPage />,
             loader: ticketLoader,
-            action: ticketDeleteAction,
+            action: actionDeleteandPost,
           },
           {
             path: "new",
@@ -61,8 +62,9 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "login",
+        path: "auth",
         element: <Login />,
+        action: registerAction,
       },
     ],
   },

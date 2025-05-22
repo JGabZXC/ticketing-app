@@ -57,12 +57,17 @@ const ticketSchema = new mongoose.Schema(
         },
         createdAt: {
           type: Date,
-          default: Date.now,
+          default: () => Date.now(),
         },
       },
     ],
   },
   { _id: true }
 );
+
+ticketSchema.post("save", function (doc, next) {
+  console.log(doc);
+  next();
+});
 
 export default mongoose.model("Ticket", ticketSchema);

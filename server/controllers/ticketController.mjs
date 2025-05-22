@@ -148,7 +148,7 @@ export const getComment = catchAsync(async (req, res, next) => {
 
 export const postComment = catchAsync(async (req, res, next) => {
   const { ticketId } = req.params;
-  const { comment } = req.body;
+  let { comment } = req.body;
   const ticket = await Ticket.findById(ticketId).populate({
     path: "comments.postedBy",
   });
@@ -157,7 +157,10 @@ export const postComment = catchAsync(async (req, res, next) => {
   if (!comment) return next(new AppError("Please provide a comment", 400));
 
   const errorComment = validateComment(comment);
-
+  comment = comment
+    .replace(/\r/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
   if (errorComment) return next(new AppError(errorComment, 400));
 
   ticket.comments.push({

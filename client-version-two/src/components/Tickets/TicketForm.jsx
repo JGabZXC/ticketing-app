@@ -99,25 +99,60 @@ export async function action({ request }) {
   return redirect("/tickets");
 }
 
-export async function actionDelete({ request, params }) {
-  const response = await fetch(
-    `http://localhost:3000/api/v1/tickets/${params.ticketId}`,
-    {
-      method: request.method,
-      credentials: "include",
-    }
-  );
+export async function actionDeleteandPost({ request, params }) {
+  const formData = await request.formData();
+  const body = {
+    comment: formData.get("comment"),
+  };
+  let url = `http://localhost:3000/api/v1/tickets/${params.ticketId}`;
+
+  if (request.method === "POST") {
+    url = `http://localhost:3000/api/v1/tickets/${params.ticketId}/comment`;
+  }
+
+  if (formData.get("commentId")) {
+    url = `http://localhost:3000/api/v1/tickets/${
+      params.ticketId
+    }/delete/${formData.get("commentId")}`;
+  }
+
+  console.log(body);
+
+  const response = await fetch(url, {
+    method: request.method,
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
 
   if (response.status === 403) {
     toast.error("You are not authorized to delete this ticket");
     return;
   }
 
+  if (response.status === 400) {
+    const errorData = await response.json();
+    toast.error(errorData.message || "Error with ticket action");
+    return;
+  }
+
   if (!response.ok)
-    throw new Response(JSON.stringify({ message: "Error deleting ticket" }), {
+    throw new Response(JSON.stringify({ message: "Error with ticket" }), {
       status: 500,
     });
 
-  toast.success("Ticket deleted successfully");
-  return redirect("/tickets");
+  if (request.method === "DELETE") {
+    if (formData.get("commentId")) {
+      toast.success("Comment deleted successfully");
+      return redirect(`/tickets/${params.ticketId}`);
+    }
+    toast.success("Ticket deleted successfully");
+    return redirect(`/tickets`);
+  }
+  if (request.method === "POST") {
+    toast.success("Comment added successfully");
+    return redirect(`/tickets/${params.ticketId}`);
+  }
 }

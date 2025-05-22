@@ -12,13 +12,20 @@ dotenv.config({ path: "./config.env" });
 
 const server = app;
 
+let DB = process.env.DATABASE_URL.replace(
+  "<USER>",
+  process.env.DATABASE_USER
+).replace("<PASSWORD>", process.env.DATABASE_PASSWORD);
+
 mongoose
-  .connect(process.env.DATABASE_LOCAL)
+  .connect(DB)
   .then(() => console.log("DB connection successful!"))
   .catch((err) => console.log(err.message));
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+server.listen(PORT, "0.0.0.0", () =>
+  console.log(`Server is running on port ${PORT}`)
+);
 
 process.on("unhandledRejection", (err) => {
   console.log("Unhandled Rejection! Shutting down...");

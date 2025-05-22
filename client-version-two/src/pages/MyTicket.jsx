@@ -1,17 +1,22 @@
-import { Await, useLoaderData } from "react-router-dom";
+import { Await, useLoaderData, useNavigate } from "react-router-dom";
 
 import Tickets from "../components/Tickets/Tickets";
 import { Suspense } from "react";
 import Loading from "../components/Loading/Loading";
-import TicketButtons from "../components/Tickets/TicketButtons";
+import { useSelector } from "react-redux";
 
 export default function MyTicket() {
   const { tickets } = useLoaderData();
+  const user = useSelector((state) => state.auth?.user);
+  const isLoggedIn = useSelector((state) => state.auth?.isLoggedIn);
+  const navigate = useNavigate();
+
+  if (!user && !isLoggedIn) navigate("/tickets");
+
   return (
     <Suspense fallback={<Loading />}>
       <Await resolve={tickets}>
         {(resolvedTickets) => {
-          console.log(resolvedTickets);
           // if (resolvedTickets.data.tickets.length === 0) {
           //   return (
           //     <section className="p-4 mt-10">
