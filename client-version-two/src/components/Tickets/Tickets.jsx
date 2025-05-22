@@ -21,19 +21,35 @@ export default function Tickets({ tickets, totalPages }) {
 
   return (
     <section className="p-4 mt-10">
-      <TicketButtons />
-      {isLoading ? (
-        <Loading />
+      <TicketButtons totalPages={totalPages} />
+
+      {tickets.length !== 0 ? (
+        <>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+              {tickets.length > 0 &&
+                tickets.map((ticket) => (
+                  <CardTicket key={ticket._id} ticket={ticket} />
+                ))}
+            </div>
+          )}
+        </>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-          {tickets.length > 0 &&
-            tickets.map((ticket) => (
-              <CardTicket key={ticket._id} ticket={ticket} />
-            ))}
-        </div>
+        <>
+          <h2 className="text-xl text-slate-700 font-medium text-center">
+            No tickets were found
+          </h2>
+          <p className="text-center text-sm text-slate-500">
+            No tickets were found, try creating one.
+          </p>
+        </>
       )}
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
+      {totalPages !== 0 && (
+        <Pagination currentPage={currentPage} totalPages={totalPages} />
+      )}
     </section>
   );
 }

@@ -12,21 +12,21 @@ export default function MyTicket() {
       <Await resolve={tickets}>
         {(resolvedTickets) => {
           console.log(resolvedTickets);
-          if (resolvedTickets.data.tickets.length === 0) {
-            return (
-              <section className="p-4 mt-10">
-                <TicketButtons />
-                <div>
-                  <h2 className="text-center text-slate-700 text-lg lg:text-2xl">
-                    No tickets found
-                  </h2>
-                  <p className="text-center text-slate-500 text-sm lg:text-md">
-                    You have not created any tickets yet.
-                  </p>
-                </div>
-              </section>
-            );
-          }
+          // if (resolvedTickets.data.tickets.length === 0) {
+          //   return (
+          //     <section className="p-4 mt-10">
+          //       <TicketButtons />
+          //       <div>
+          //         <h2 className="text-center text-slate-700 text-lg lg:text-2xl">
+          //           No tickets found
+          //         </h2>
+          //         <p className="text-center text-slate-500 text-sm lg:text-md">
+          //           You have not created any tickets yet.
+          //         </p>
+          //       </div>
+          //     </section>
+          //   );
+          // }
           return (
             <Tickets
               tickets={resolvedTickets.data.tickets}

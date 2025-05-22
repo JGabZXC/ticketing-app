@@ -1,7 +1,7 @@
 import { Link, Form, useSubmit, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function TicketButtons() {
+export default function TicketButtons({ totalPages }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
@@ -41,56 +41,59 @@ export default function TicketButtons() {
           </Link>
         </>
       )}
-      <Form className="flex gap-4 items-center text-sm lg:text-md">
-        <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
-          <label htmlFor="" className="font-semibold text-slate-700">
-            Order by
-          </label>
-          <select className="text-slate-400" onChange={handleOrderByChange}>
-            <option value="-createdAt" selected={orderBy === "-createdAt"}>
-              Newest
-            </option>
-            <option value="createdAt" selected={orderBy === "createdAt"}>
-              Oldest
-            </option>
-          </select>
-        </div>
-        <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
-          <label htmlFor="" className="font-semibold text-slate-700">
-            Limit by
-          </label>
-          <select className="text-slate-400" onChange={handleLimitChange}>
-            <option value="20" selected={limit === "20"}>
-              20
-            </option>
-            <option value="50" selected={limit === "50"}>
-              50
-            </option>
-            <option value="100" selected={limit === "100"}>
-              100
-            </option>
-          </select>
-        </div>
-        <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
-          <label htmlFor="" className="font-semibold text-slate-700">
-            Priority
-          </label>
-          <select className="text-slate-400" onChange={handlePriorityChange}>
-            <option value="all" selected={priority === "all"}>
-              All
-            </option>
-            <option value="low" selected={priority === "low"}>
-              Low
-            </option>
-            <option value="medium" selected={priority === "medium"}>
-              Medium
-            </option>
-            <option value="high" selected={priority === "high"}>
-              High
-            </option>
-          </select>
-        </div>
-      </Form>
+
+      {totalPages !== 0 && (
+        <Form className="flex gap-4 items-center text-sm lg:text-md">
+          <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
+            <label htmlFor="" className="font-semibold text-slate-700">
+              Order by
+            </label>
+            <select className="text-slate-400" onChange={handleOrderByChange}>
+              <option value="-createdAt" selected={orderBy === "-createdAt"}>
+                Newest
+              </option>
+              <option value="createdAt" selected={orderBy === "createdAt"}>
+                Oldest
+              </option>
+            </select>
+          </div>
+          <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
+            <label htmlFor="" className="font-semibold text-slate-700">
+              Limit by
+            </label>
+            <select className="text-slate-400" onChange={handleLimitChange}>
+              <option value="20" selected={limit === "20"}>
+                20
+              </option>
+              <option value="50" selected={limit === "50"}>
+                50
+              </option>
+              <option value="100" selected={limit === "100"}>
+                100
+              </option>
+            </select>
+          </div>
+          <div className="flex flex-col items-center lg:flex-row lg:items-end gap-2">
+            <label htmlFor="" className="font-semibold text-slate-700">
+              Priority
+            </label>
+            <select className="text-slate-400" onChange={handlePriorityChange}>
+              <option value="all" selected={priority === "all"}>
+                All
+              </option>
+              <option value="low" selected={priority === "low"}>
+                Low
+              </option>
+              <option value="medium" selected={priority === "medium"}>
+                Medium
+              </option>
+              <option value="high" selected={priority === "high"}>
+                High
+              </option>
+            </select>
+          </div>
+        </Form>
+      )}
     </div>
   );
 }

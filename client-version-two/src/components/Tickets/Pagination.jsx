@@ -5,7 +5,9 @@ export default function Pagination({ currentPage, totalPages }) {
   const submit = useSubmit();
   const dispatch = useDispatch();
 
-  if (currentPage > totalPages) {
+  if (currentPage > (totalPages === 0 ? 1 : totalPages)) {
+    // This will enter infinite loop if the currentPage is greater than totalPage
+    // ex: if totalPages is 0 fetched from server -> currentPage is 1 so totalPages is 0 -> 1 > 0 (true) -> infinite loop
     dispatch(ticketActions.setPage(1));
     const page = 1;
     const params = new URLSearchParams(window.location.search);
