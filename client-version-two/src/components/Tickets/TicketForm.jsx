@@ -136,6 +136,17 @@ export async function actionDeleteandPost({ request, params }) {
     url = `http://localhost:3000/api/v1/tickets/${params.ticketId}`;
   }
 
+  if (type === "edit-ticket") {
+    body = {
+      title: formData.get("title"),
+      description: formData.get("description"),
+    };
+    url = `http://localhost:3000/api/v1/tickets/${params.ticketId}`;
+  }
+
+  console.log(type);
+  console.log(body);
+
   const response = await fetch(url, {
     method: request.method,
     credentials: "include",
@@ -249,6 +260,27 @@ export async function actionDeleteandPost({ request, params }) {
         }
       );
     toast.success("Ticket marked successfully");
+    return redirect(`/tickets/${params.ticketId}`);
+  }
+
+  if (type === "edit-ticket") {
+    if (response.status === 403) {
+      toast.error("You are not authorized to edit this ticket");
+      return;
+    }
+    if (response.status === 400) {
+      const errorData = await response.json();
+      toast.error(errorData.message || "Error with editing ticket");
+      return;
+    }
+    if (!response.ok)
+      throw new Response(
+        JSON.stringify({ message: "Error with editing ticket" }),
+        {
+          status: 500,
+        }
+      );
+    toast.success("Ticket edited successfully");
     return redirect(`/tickets/${params.ticketId}`);
   }
 

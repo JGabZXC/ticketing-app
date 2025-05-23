@@ -53,6 +53,7 @@ export default function TicketItemMessage({ ticket }) {
                 <div className="flex gap-2">
                   <span className="text-slate-600 font-medium">
                     {comment.postedBy.fullName}
+                    {comment.postedBy.role === "agent" ? " (Agent)" : ""}{" "}
                   </span>
                   <div className="">
                     <span className="text-slate-600 text-sm">

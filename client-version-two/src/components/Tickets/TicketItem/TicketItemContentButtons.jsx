@@ -11,7 +11,12 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useSubmit, Link } from "react-router-dom";
 import Modal from "../../Modal/Modal";
 import { useSelector } from "react-redux";
-export default function TicketItemContentButtons({ userId, assignedAgent }) {
+export default function TicketItemContentButtons({
+  userId,
+  assignedAgent,
+  setIsEditing,
+  isEditing,
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const submit = useSubmit();
@@ -80,55 +85,54 @@ export default function TicketItemContentButtons({ userId, assignedAgent }) {
           </button>
         </Link>
 
-        {(user && userId === user._id) ||
-          (user?.role === "agent" && (
-            <Menu as="div" className="relative inline-block text-left">
-              <div>
-                <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-                  Options
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    className="-mr-1 size-5 text-gray-400"
-                  />
-                </MenuButton>
-              </div>
+        {((user && userId === user?._id) || user?.role === "agent") && (
+          <Menu as="div" className="relative inline-block text-left">
+            <div>
+              <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
+                Options
+                <ChevronDownIcon
+                  aria-hidden="true"
+                  className="-mr-1 size-5 text-gray-400"
+                />
+              </MenuButton>
+            </div>
 
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-              >
-                {user._id === userId && (
-                  <>
-                    <div className="py-1">
-                      <MenuItem>
-                        <Link
-                          to="#"
-                          className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
-                        >
-                          Edit
-                        </Link>
-                      </MenuItem>
-                    </div>
-                    <div className="py-1">
-                      <MenuItem>
-                        <button
-                          type="button"
-                          className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden w-full text-left"
-                          onClick={openModal}
-                        >
-                          Delete
-                        </button>
-                      </MenuItem>
-                    </div>
-                  </>
-                )}
+            <MenuItems
+              transition
+              className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+            >
+              {user._id === userId && (
+                <>
+                  <div className="py-1">
+                    <MenuItem>
+                      <button
+                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden w-full text-left"
+                        onClick={() => setIsEditing((prevValue) => !prevValue)}
+                      >
+                        {isEditing ? "Cancel Edit" : "Edit"}
+                      </button>
+                    </MenuItem>
+                  </div>
+                  <div className="py-1">
+                    <MenuItem>
+                      <button
+                        type="button"
+                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden w-full text-left"
+                        onClick={openModal}
+                      >
+                        Delete
+                      </button>
+                    </MenuItem>
+                  </div>
+                </>
+              )}
 
-                {user?.role === "agent" && (
-                  <AgentAction user={user} assignedAgent={assignedAgent} />
-                )}
-              </MenuItems>
-            </Menu>
-          ))}
+              {user?.role === "agent" && (
+                <AgentAction user={user} assignedAgent={assignedAgent} />
+              )}
+            </MenuItems>
+          </Menu>
+        )}
       </div>
     </>
   );
