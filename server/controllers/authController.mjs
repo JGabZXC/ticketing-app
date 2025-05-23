@@ -41,8 +41,6 @@ export const register = catchAsync(async (req, res, next) => {
 
   let errors = {};
 
-  console.log(req.body);
-
   if (validateUsername(username)) errors.username = validateUsername(username);
   if (validateEmail(email)) errors.email = validateEmail(email);
   if (validateFirstName(firstName))
@@ -51,8 +49,6 @@ export const register = catchAsync(async (req, res, next) => {
   if (validatePassword(password)) errors.password = validatePassword(password);
   if (validateConfirmPassword(password, confirmPassword))
     errors.confirmPassword = validateConfirmPassword(password, confirmPassword);
-
-  console.log(errors);
 
   if (Object.keys(errors).length > 0) {
     return res.status(400).json({

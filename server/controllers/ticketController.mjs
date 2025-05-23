@@ -12,6 +12,13 @@ export const getAllTickets = catchAsync(async (req, res, next) => {
   if (req.query.priority && req.query.priority !== "all")
     filter.priority = req.query.priority;
 
+  if (req.user?._id && req.params.userId) {
+    if (req.user._id === req.params.userId)
+      return next(
+        new AppError("You are not authorized to perform this action", 403)
+      );
+  }
+
   const features = new Features(Ticket.find(filter), req.query)
     .paginate()
     .sort();
@@ -71,6 +78,11 @@ export const updateTicket = catchAsync(async (req, res, next) => {
   }
 
   req.body.updatedAt = Date.now();
+  if (req.body.assignedTo === "null" || req.body.assignedTo === "") {
+    req.body.assignedTo = null;
+  }
+
+  console.log(req.body);
 
   const updatedTicket = await Ticket.findByIdAndUpdate(id, req.body, {
     new: true,
@@ -230,8 +242,6 @@ export const getPriority = catchAsync(async (req, res, next) => {
   }
 
   matchStage.createdBy;
-
-  console.log("matchStage", matchStage);
 
   const result = await Ticket.aggregate([
     {

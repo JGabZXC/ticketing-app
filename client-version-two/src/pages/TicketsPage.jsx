@@ -1,7 +1,8 @@
-import { Await, useLoaderData } from "react-router-dom";
+import { Await, redirect, useLoaderData } from "react-router-dom";
 import { Suspense } from "react";
 import Tickets from "../components/Tickets/Tickets";
 import Loading from "../components/Loading/Loading";
+import { toast } from "react-toastify";
 
 export default function TicketsPage() {
   const { tickets } = useLoaderData();
@@ -35,7 +36,15 @@ async function loadTickets({ request, params }) {
     urlReq = `http://localhost:3000/api/v1/users/${params.userId}/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
   }
 
-  const response = await fetch(urlReq);
+  const response = await fetch(urlReq, {
+    credentials: "include",
+  });
+
+  if (response.status === 401) {
+    throw new Response(JSON.stringify({ message: "Unauthorized" }), {
+      status: 401,
+    });
+  }
 
   if (!response.ok)
     throw new Response(

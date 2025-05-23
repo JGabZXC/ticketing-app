@@ -22,6 +22,12 @@ function handleTokenExpiredError(err) {
   return new AppError(`Token expired: ${err.message}`, 401);
 }
 
+function handleDuplicateFieldsDB(err) {
+  const value = err.keyValue[Object.keys(err.keyValue)[0]];
+  const message = `Duplicate field value: ${value}. Please use another value!`;
+  return new AppError(message, 409);
+}
+
 function sendErrorDev(err, res) {
   res.status(err.statusCode).json({
     status: err.status,
@@ -52,19 +58,19 @@ export default function (err, req, res, next) {
 
   console.log(err);
 
-  if (process.env.NODE_ENV === "development") {
-    sendErrorDev(err, res);
-  } else if (process.env.NODE_ENV === "production") {
-    let error = { ...err, name: err.name, message: err.message };
+  let error = { ...err, name: err.name, message: err.message };
 
-    if (error.name === "CastError") error = handleCastErrorDB(error);
-    if (error.name === "ValidationError")
-      error = handleValidationErrorDB(error);
-    if (error.name === "JsonWebTokenError")
-      error = handleJsonWebTokenError(error);
-    if (error.name === "TokenExpiredError")
-      error = handleTokenExpiredError(error);
-
-    sendErrorProd(error, req, res);
+  if (error.name === "CastError") error = handleCastErrorDB(error);
+  if (error.name === "ValidationError") error = handleValidationErrorDB(error);
+  if (error.name === "JsonWebTokenError")
+    error = handleJsonWebTokenError(error);
+  if (error.name === "TokenExpiredError")
+    error = handleTokenExpiredError(error);
+  if (error.name === "MongoServerError" && error.code === 11000) {
+    error = handleDuplicateFieldsDB(error);
   }
+
+  if (process.env.NODE_ENV === "development") return sendErrorDev(error, res);
+
+  sendErrorProd(error, req, res);
 }

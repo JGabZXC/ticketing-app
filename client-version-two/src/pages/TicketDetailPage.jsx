@@ -8,7 +8,7 @@ export default function TicketDetailPage() {
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <Await resolve={ticket}>
+        <Await resolve={ticket} errorElement={<p>Could not fetch ticket.</p>}>
           {(resolvedTicket) => (
             <TicketItem ticket={resolvedTicket.data.ticket} />
           )}
@@ -19,6 +19,11 @@ export default function TicketDetailPage() {
 }
 
 async function loadTicket(ticketId) {
+  if (!ticketId || ticketId === "myticket")
+    throw new Response(JSON.stringify({ message: "Ticket ID is required" }), {
+      status: 400,
+    });
+
   const response = await fetch(
     `http://localhost:3000/api/v1/tickets/${ticketId}`
   );

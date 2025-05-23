@@ -15,7 +15,6 @@ export function validateUsername(username = "") {
 }
 
 export function validateEmail(email = "") {
-  console.log(email);
   if (!email.trim()) return "No email provided";
   if (email.length < 5) return "Email is too short";
   if (email.length > 50) return "Email is too long";

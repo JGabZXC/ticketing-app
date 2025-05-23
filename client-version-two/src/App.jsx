@@ -38,10 +38,6 @@ const router = createBrowserRouter([
             index: true,
             element: <TicketsPage />,
             loader: ticketsLoader,
-            // shouldRevalidate: ({ currentUrl, nextUrl }) => {
-            //   // Force revalidation when query params change
-            //   return currentUrl.search !== nextUrl.search;
-            // },
           },
           {
             path: ":ticketId",

@@ -16,7 +16,10 @@ export default function TicketItemContent({ ticket }) {
 
   return (
     <section className="p-4 max-w-7xl mx-auto">
-      <TicketItemContentButtons userId={ticket.createdBy._id} />
+      <TicketItemContentButtons
+        userId={ticket.createdBy?._id}
+        assignedAgent={ticket?.assignedTo}
+      />
       <h1 className="text-xl font-semibold text-slate-800">{ticket.title}</h1>
       <div className="flex flex-col gap-2 mb-5">
         <div className="flex flex-col gap-2 md:flex-row">
@@ -42,6 +45,9 @@ export default function TicketItemContent({ ticket }) {
             minute: "2-digit",
           })}
         </Span>
+        {ticket.assignedTo && (
+          <Span>Assigned Agent: {ticket.assignedTo.fullName}</Span>
+        )}
         <div className="flex gap-2">
           <Span className={classesStatus}>{ticket.status}</Span>
           <Span className={classesPriority}>{ticket.priority}</Span>

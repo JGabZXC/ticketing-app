@@ -12,6 +12,14 @@ export default function ErrorPage() {
     title = "Page not found";
     message = "Could not find resource or page.";
   }
+  if (error.status === 401) {
+    title = "Unauthorized";
+    message = "You are not authorized to access this resource.";
+  }
+  if (error.status === 400) {
+    title = "Bad Request";
+    message = "Invalid request.";
+  }
 
   return (
     <>

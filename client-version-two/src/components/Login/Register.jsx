@@ -61,7 +61,6 @@ export default function Register() {
 }
 
 export async function action({ request }) {
-  console.log("Register action called");
   const formData = await request.formData();
   const userData = {
     username: formData.get("username"),
@@ -82,6 +81,12 @@ export async function action({ request }) {
 
   if (response.status === 400) {
     const errorData = await response.json();
+    return errorData;
+  }
+
+  if (response.status === 409) {
+    const errorData = await response.json();
+    toast.error(errorData.message);
     return errorData;
   }
 

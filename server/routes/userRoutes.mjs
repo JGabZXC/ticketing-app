@@ -16,7 +16,7 @@ import ticketRoutes from "./ticketRoutes.mjs";
 
 const router = express.Router();
 
-router.use("/:userId/tickets", ticketRoutes);
+router.use("/:userId/tickets", isAuthenticated, ticketRoutes);
 
 router
   .route("/")

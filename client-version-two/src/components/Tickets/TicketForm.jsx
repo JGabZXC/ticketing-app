@@ -101,22 +101,40 @@ export async function action({ request }) {
 
 export async function actionDeleteandPost({ request, params }) {
   const formData = await request.formData();
-  const body = {
-    comment: formData.get("comment"),
-  };
+  const type = formData.get("type");
+  let body = {};
+
   let url = `http://localhost:3000/api/v1/tickets/${params.ticketId}`;
 
-  if (request.method === "POST") {
-    url = `http://localhost:3000/api/v1/tickets/${params.ticketId}/comment`;
-  }
+  if (type === "delete-ticket")
+    url = `http://localhost:3000/api/v1/tickets/${params.ticketId}`;
 
-  if (formData.get("commentId")) {
+  if (type === "delete-comment")
     url = `http://localhost:3000/api/v1/tickets/${
       params.ticketId
     }/delete/${formData.get("commentId")}`;
+
+  if (type === "add-comment") {
+    body = {
+      comment: formData.get("comment"),
+    };
+    url = `http://localhost:3000/api/v1/tickets/${params.ticketId}/comment`;
   }
 
-  console.log(body);
+  if (type === "assign-to-me") {
+    body = {
+      assignedTo:
+        formData.get("assignedTo") !== "null" ? formData.get("assignedTo") : "",
+    };
+    url = `http://localhost:3000/api/v1/tickets/${params.ticketId}`;
+  }
+
+  if (type === "mark-as") {
+    body = {
+      status: formData.get("status"),
+    };
+    url = `http://localhost:3000/api/v1/tickets/${params.ticketId}`;
+  }
 
   const response = await fetch(url, {
     method: request.method,
@@ -127,32 +145,112 @@ export async function actionDeleteandPost({ request, params }) {
     body: JSON.stringify(body),
   });
 
-  if (response.status === 403) {
-    toast.error("You are not authorized to delete this ticket");
-    return;
-  }
-
-  if (response.status === 400) {
-    const errorData = await response.json();
-    toast.error(errorData.message || "Error with ticket action");
-    return;
-  }
-
-  if (!response.ok)
-    throw new Response(JSON.stringify({ message: "Error with ticket" }), {
-      status: 500,
-    });
-
-  if (request.method === "DELETE") {
-    if (formData.get("commentId")) {
-      toast.success("Comment deleted successfully");
-      return redirect(`/tickets/${params.ticketId}`);
+  if (type === "delete-ticket") {
+    if (response.status === 403) {
+      toast.error("You are not authorized to delete this ticket");
+      return;
     }
+    if (response.status === 400) {
+      const errorData = await response.json();
+      toast.error(errorData.message || "Error with deleting ticket");
+      return;
+    }
+    if (!response.ok)
+      throw new Response(
+        JSON.stringify({ message: "Error with deleting ticket" }),
+        {
+          status: 500,
+        }
+      );
     toast.success("Ticket deleted successfully");
     return redirect(`/tickets`);
   }
-  if (request.method === "POST") {
+
+  if (type === "delete-comment") {
+    if (response.status === 403) {
+      toast.error("You are not authorized to delete this comment");
+      return;
+    }
+    if (response.status === 400) {
+      const errorData = await response.json();
+      toast.error(errorData.message || "Error with deleting comment");
+      return;
+    }
+    if (!response.ok)
+      throw new Response(
+        JSON.stringify({ message: "Error with deleting comment" }),
+        {
+          status: 500,
+        }
+      );
+    toast.success("Comment deleted successfully");
+    return redirect(`/tickets/${params.ticketId}`);
+  }
+
+  if (type === "add-comment") {
+    if (response.status === 403) {
+      toast.error("You are not authorized to add a comment");
+      return;
+    }
+    if (response.status === 400) {
+      const errorData = await response.json();
+      toast.error(errorData.message || "Error with adding comment");
+      return;
+    }
+    if (!response.ok)
+      throw new Response(
+        JSON.stringify({ message: "Error with adding comment" }),
+        {
+          status: 500,
+        }
+      );
     toast.success("Comment added successfully");
     return redirect(`/tickets/${params.ticketId}`);
   }
+
+  if (type === "assign-to-me") {
+    if (response.status === 403) {
+      toast.error("You are not authorized to assign this ticket");
+      return;
+    }
+    if (response.status === 400) {
+      const errorData = await response.json();
+      toast.error(errorData.message || "Error with assigning ticket");
+      return;
+    }
+    if (!response.ok)
+      throw new Response(
+        JSON.stringify({ message: "Error with assigning ticket" }),
+        {
+          status: 500,
+        }
+      );
+    if (body.assignedTo === "")
+      toast.success("This ticket has been unassigned!");
+    else toast.success("This ticket has been assigned to you!");
+    return redirect(`/tickets/${params.ticketId}`);
+  }
+
+  if (type === "mark-as") {
+    if (response.status === 403) {
+      toast.error("You are not authorized to mark this ticket");
+      return;
+    }
+    if (response.status === 400) {
+      const errorData = await response.json();
+      toast.error(errorData.message || "Error with marking ticket");
+      return;
+    }
+    if (!response.ok)
+      throw new Response(
+        JSON.stringify({ message: "Error with marking ticket" }),
+        {
+          status: 500,
+        }
+      );
+    toast.success("Ticket marked successfully");
+    return redirect(`/tickets/${params.ticketId}`);
+  }
+
+  return null;
 }
