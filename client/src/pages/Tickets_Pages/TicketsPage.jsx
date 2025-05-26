@@ -46,6 +46,8 @@ async function loadTickets({ request, params }) {
     signal,
   });
 
+  const data = await response.json();
+
   if (response.status === 401) {
     throw new Response(JSON.stringify({ message: "Unauthorized" }), {
       status: 401,
@@ -53,12 +55,11 @@ async function loadTickets({ request, params }) {
   }
 
   if (!response.ok)
-    throw new Response(
-      JSON.stringify({ message: "Could not fetch tickets." }),
-      { status: 500 }
-    );
+    throw {
+      message: data.message || "Error fetching tickets",
+      status: response.status,
+    };
 
-  const data = await response.json();
   return data;
 }
 

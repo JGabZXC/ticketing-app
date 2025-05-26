@@ -8,7 +8,7 @@ export default function ErrorTicket() {
 
   if (error.status === 400) {
     title = "400 | Bad Request";
-    message = "Invalid ticket ID";
+    message = "Invalid ID";
   }
 
   if (error.status === 404) {

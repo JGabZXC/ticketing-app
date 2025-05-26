@@ -5,9 +5,7 @@ import Header from "../../components/Header/Header";
 export default function ErrorPage() {
   const error = useRouteError();
   let title = "500 | An error occurred";
-  let message = "Something went wrong!";
-
-  console.log(error);
+  let message = JSON.parse(error.data)?.message || "Something went wrong!";
 
   if (error.status === 404) {
     title = "404 | Page not found";
@@ -16,7 +14,9 @@ export default function ErrorPage() {
 
   if (error.status === 403) {
     title = "403 | Forbidden";
-    message = "You are forbidden to access this resource.";
+    message =
+      JSON.parse(error.data)?.message ||
+      "You are forbidden to access this resource.";
   }
 
   if (error.status === 400) {

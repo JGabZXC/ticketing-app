@@ -34,7 +34,7 @@ async function loadTicket(ticketId) {
   if (!response.ok) {
     const data = await response.json();
     throw {
-      message: data.message,
+      message: data.message || "Error fetching ticket",
       status: response.status,
     };
   }
@@ -55,9 +55,41 @@ export async function multiPurposeAction({ request, params }) {
   const http = new ApiClient();
 
   if (request.method === "DELETE") {
-    await http.delete(`/api/v1/tickets/${ticketId}`);
+    let message = "";
+    let redirectUrl = "";
+    if (formData.get("type") === "delete-comment") {
+      await http.delete(
+        `/api/v1/tickets/${ticketId}/delete/${formData.get("commentId")}`
+      );
+      message = "Comment deleted successfully";
+      redirectUrl = `/tickets/${ticketId}`;
+    } else {
+      await http.delete(`/api/v1/tickets/${ticketId}`);
+      message = "Ticket deleted successfully";
+      redirectUrl = "/tickets";
+    }
 
-    toast.success("Ticket deleted successfully");
-    return redirect("/tickets");
+    toast.success(message);
+    return redirect(redirectUrl);
+  }
+
+  if (request.method === "PATCH") {
+    console.log("You are here");
+    await http.patch(`/api/v1/tickets/${ticketId}`, {
+      description: formData.get("description"),
+    });
+
+    toast.success("Ticket updated successfully");
+    return redirect(`/tickets/${ticketId}`);
+  }
+
+  if (request.method === "POST") {
+    console.log("You are here in post");
+    await http.post(`/api/v1/tickets/${ticketId}/comment`, {
+      comment: formData.get("comment"),
+    });
+
+    toast.success("Comment added successfully");
+    return redirect(`/tickets/${ticketId}`);
   }
 }

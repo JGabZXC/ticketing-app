@@ -40,6 +40,8 @@ export class ApiClient {
       body: JSON.stringify(body),
     });
 
+    console.log(response);
+
     if (response.status === 401) {
       return {
         message: "You are not authorized to perform this action.",
@@ -49,9 +51,34 @@ export class ApiClient {
 
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(data.message || "Error updating resource");
+      throw new Response(
+        JSON.stringify({ message: data.message || "Error updating resource" }),
+        { status: response.status }
+      );
     }
 
-    return response.json();
+    return response;
+  }
+
+  async post(url, body, options = {}) {
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Response(
+        JSON.stringify({ message: data.message || "Error creating resource" }),
+        { status: response.status }
+      );
+    }
+
+    return response;
   }
 }
