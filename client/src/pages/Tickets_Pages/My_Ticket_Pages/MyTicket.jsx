@@ -1,8 +1,8 @@
 import { Await, useLoaderData, useNavigate } from "react-router-dom";
 
-import Tickets from "../components/Tickets/Tickets";
+import Tickets from "../../../components/Tickets/Tickets";
 import { Suspense } from "react";
-import Loading from "../components/Loading/Loading";
+import Loading from "../../../components/Loading/Loading";
 
 export default function MyTicket() {
   const { tickets } = useLoaderData();

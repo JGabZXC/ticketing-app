@@ -1,14 +1,15 @@
 import { Await, useLoaderData } from "react-router-dom";
-import TicketItem from "../components/Tickets/TicketItem/TicketItem";
+import TicketItem from "../../components/Tickets/TicketItem/TicketItem";
 import { Suspense } from "react";
-import Loading from "../components/Loading/Loading";
+import Loading from "../../components/Loading/Loading";
+import ErrorTicket from "./ErrorTicket";
 
 export default function TicketDetailPage() {
   const { ticket } = useLoaderData();
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <Await resolve={ticket} errorElement={<p>Could not fetch ticket.</p>}>
+        <Await resolve={ticket} errorElement={<ErrorTicket />}>
           {(resolvedTicket) => (
             <TicketItem ticket={resolvedTicket.data.ticket} />
           )}
@@ -30,9 +31,10 @@ async function loadTicket(ticketId) {
 
   if (!response.ok) {
     const data = await response.json();
-    throw new Response(JSON.stringify({ message: data.message }), {
+    throw {
+      message: data.message,
       status: response.status,
-    });
+    };
   }
 
   const resData = await response.json();

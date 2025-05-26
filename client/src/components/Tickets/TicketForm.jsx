@@ -73,32 +73,6 @@ export default function TicketForm() {
   );
 }
 
-export async function action({ request }) {
-  const data = await request.formData();
-  const body = {
-    title: data.get("title"),
-    description: data.get("description"),
-    priority: data.get("priority"),
-  };
-
-  const response = await fetch("http://localhost:3000/api/v1/tickets", {
-    method: request.method,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok)
-    throw new Response(JSON.stringify({ message: "Error creating ticket" }), {
-      status: 500,
-    });
-
-  toast.success("Ticket created successfully");
-  return redirect("/tickets");
-}
-
 export async function actionDeleteandPost({ request, params }) {
   const formData = await request.formData();
   const type = formData.get("type");
