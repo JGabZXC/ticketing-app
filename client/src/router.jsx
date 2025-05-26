@@ -8,13 +8,14 @@ import TicketDetailPage from "./pages/Tickets_Pages/TicketDetailPage";
 import TicketRoot from "./pages/Tickets_Pages/TicketRoot";
 import ErrorPage from "./pages/Error_Page/ErrorPage";
 
-import { actionDeleteandPost } from "./components/Tickets/TicketForm";
 import { loader as ticketsLoader } from "./pages/Tickets_Pages/TicketsPage";
 import { loader as ticketLoader } from "./pages/Tickets_Pages/TicketDetailPage";
 import TicketNew, { newTicketAction } from "./pages/Tickets_Pages/TicketNew";
 import MyTicket from "./pages/Tickets_Pages/My_Ticket_Pages/MyTicket";
 
 import { action as registerAction } from "./components/Login/Register";
+import { loader as userLoader } from "./pages/Tickets_Pages/TicketNew";
+import { multiPurposeAction } from "./pages/Tickets_Pages/TicketDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -36,12 +37,13 @@ export const router = createBrowserRouter([
             path: ":ticketId",
             element: <TicketDetailPage />,
             loader: ticketLoader,
-            action: actionDeleteandPost,
+            action: multiPurposeAction,
           },
           {
             path: "new",
             element: <TicketNew />,
             action: newTicketAction,
+            loader: userLoader,
           },
           {
             path: "myticket/:userId",

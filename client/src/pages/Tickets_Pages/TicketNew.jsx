@@ -1,19 +1,8 @@
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate, redirect } from "react-router-dom";
+import { redirect } from "react-router-dom";
 import TicketForm from "../../components/Tickets/TicketForm";
 import { toast } from "react-toastify";
 
 export default function TicketNew() {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user && !isAuthenticated) {
-      navigate("/auth?type=login");
-    }
-  }, [user, isAuthenticated, navigate]);
-
   return <TicketForm />;
 }
 
@@ -50,4 +39,23 @@ export async function newTicketAction({ request }) {
 
   toast.success("Ticket created successfully");
   return redirect("/tickets", { replace: true });
+}
+
+export async function loader() {
+  const response = await fetch("http://localhost:3000/api/v1/auth/me", {
+    credentials: "include",
+  });
+
+  if (response.status === 401) {
+    return redirect("/auth?type=login", { replace: true });
+  }
+
+  if (!response.ok) {
+    throw {
+      message: "Could not fetch user data",
+      status: response.status || 500,
+    };
+  }
+
+  return null;
 }

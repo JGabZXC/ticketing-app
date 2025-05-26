@@ -1,8 +1,10 @@
-import { Await, useLoaderData } from "react-router-dom";
+import { Await, redirect, useLoaderData } from "react-router-dom";
 import TicketItem from "../../components/Tickets/TicketItem/TicketItem";
 import { Suspense } from "react";
 import Loading from "../../components/Loading/Loading";
 import ErrorTicket from "./ErrorTicket";
+import { ApiClient } from "../../utils/apiClient";
+import { toast } from "react-toastify";
 
 export default function TicketDetailPage() {
   const { ticket } = useLoaderData();
@@ -45,4 +47,17 @@ export async function loader({ params }) {
   return {
     ticket: loadTicket(params.ticketId),
   };
+}
+
+export async function multiPurposeAction({ request, params }) {
+  const ticketId = params.ticketId;
+  const formData = await request.formData();
+  const http = new ApiClient();
+
+  if (request.method === "DELETE") {
+    await http.delete(`/api/v1/tickets/${ticketId}`);
+
+    toast.success("Ticket deleted successfully");
+    return redirect("/tickets");
+  }
 }
