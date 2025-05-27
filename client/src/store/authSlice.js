@@ -58,7 +58,7 @@ export const requestLogin = (username, password) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await fetch(
-        "https://ticketing-app-j94u.onrender.com//api/v1/auth/login",
+        "https://ticketing-app-j94u.onrender.com/api/v1/auth/login",
         {
           method: "POST",
           credentials: "include", // Send cookies
@@ -109,7 +109,7 @@ export const requestLogout = () => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await fetch(
-        "https://ticketing-app-j94u.onrender.com//api/v1/auth/logout",
+        "https://ticketing-app-j94u.onrender.com/api/v1/auth/logout",
         {
           credentials: "include",
         }
@@ -151,7 +151,7 @@ export const reauthenticate = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        "https://ticketing-app-j94u.onrender.com//api/v1/auth/me",
+        "https://ticketing-app-j94u.onrender.com/api/v1/auth/me",
         {
           credentials: "include", // Send cookies
         }

@@ -30,10 +30,10 @@ async function loadTickets({ request, params }) {
   const sort = url.searchParams.get("sort") || "-createdAt";
   const priority = url.searchParams.get("priority") || "all";
 
-  let urlReq = `https://ticketing-app-j94u.onrender.com//api/v1/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
+  let urlReq = `https://ticketing-app-j94u.onrender.com/api/v1/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
 
   if (params.userId) {
-    urlReq = `https://ticketing-app-j94u.onrender.com//api/v1/users/${params.userId}/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
+    urlReq = `https://ticketing-app-j94u.onrender.com/api/v1/users/${params.userId}/tickets?page=${page}&limit=${limit}&sort=${sort}&priority=${priority}`;
   }
 
   if (controller) controller.abort();

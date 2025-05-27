@@ -72,7 +72,7 @@ export async function action({ request }) {
   };
 
   const response = await fetch(
-    "https://ticketing-app-j94u.onrender.com//api/v1/auth/register",
+    "https://ticketing-app-j94u.onrender.com/api/v1/auth/register",
     {
       method: "POST",
       headers: {

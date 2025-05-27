@@ -19,7 +19,7 @@ export async function newTicketAction({ request }) {
   };
 
   const response = await fetch(
-    "https://ticketing-app-j94u.onrender.com//api/v1/tickets",
+    "https://ticketing-app-j94u.onrender.com/api/v1/tickets",
     {
       method: request.method,
       credentials: "include",
