@@ -17,7 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["https://ticketing-app-j94u.onrender.com/:5173"],
+    origin: [
+      "https://ticketing-app-j94u.onrender.com/:5173",
+      "https://ticketing-app-self.vercel.app/",
+    ],
     credentials: true,
   })
 );
