@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { reauthenticate } from "./store/authSlice";
+import { authActions, reauthenticate } from "./store/authSlice";
 import { RouterProvider } from "react-router-dom";
 
 import Toast from "./components/Toast/Toast";
@@ -10,7 +10,13 @@ function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     // Check authentication status on app load
-    dispatch(reauthenticate());
+    async function checkAuth() {
+      const result = await dispatch(reauthenticate());
+      if (reauthenticate.rejected.match(result)) {
+        dispatch(authActions.clearAuthState());
+      }
+    }
+    checkAuth();
   }, [dispatch]);
   return (
     <>

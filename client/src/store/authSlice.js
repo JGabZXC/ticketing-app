@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { uiActions } from "./uiSlice";
 import { redirect } from "react-router-dom";
+import { clearAuthStorage } from "../utils/auth";
 
 const initialState = {
   user: localStorage.getItem("user") || null,
@@ -17,12 +18,12 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("reauth", "true");
     },
     logout(state) {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("user");
+      clearAuthStorage();
       redirect("/");
     },
     setLoading(state, action) {
@@ -31,8 +32,7 @@ const authSlice = createSlice({
     clearAuthState(state) {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("user");
+      clearAuthStorage();
     },
   },
   extraReducers: (builder) => {

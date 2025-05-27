@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "1s",
+    expiresIn: "1d",
   });
 }
 
@@ -20,7 +20,9 @@ export default function createSendToken(user, statusCode, res) {
   const cookieOptions = {
     httpOnly: true,
     secure: false,
-    expires: new Date(Date.now() + 1000),
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+    ),
     sameSite: "Lax",
   };
 

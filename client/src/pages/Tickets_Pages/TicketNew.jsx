@@ -1,8 +1,10 @@
 import { redirect } from "react-router-dom";
-import TicketForm from "../../components/Tickets/TicketForm";
 import { toast } from "react-toastify";
-import store from "../../store/index";
+
 import { authActions } from "../../store/authSlice";
+import store from "../../store/index";
+
+import TicketForm from "../../components/Tickets/TicketForm";
 
 export default function TicketNew() {
   return <TicketForm />;
