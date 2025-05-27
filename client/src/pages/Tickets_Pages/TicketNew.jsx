@@ -18,14 +18,17 @@ export async function newTicketAction({ request }) {
     priority: data.get("priority"),
   };
 
-  const response = await fetch("http://localhost:3000/api/v1/tickets", {
-    method: request.method,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  const response = await fetch(
+    "https://ticketing-app-j94u.onrender.com//api/v1/tickets",
+    {
+      method: request.method,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }
+  );
 
   const resData = await response.json();
 

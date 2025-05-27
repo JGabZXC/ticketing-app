@@ -57,17 +57,20 @@ const authSlice = createSlice({
 export const requestLogin = (username, password) => {
   return async (dispatch) => {
     const sendRequest = async () => {
-      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
-        method: "POST",
-        credentials: "include", // Send cookies
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "https://ticketing-app-j94u.onrender.com//api/v1/auth/login",
+        {
+          method: "POST",
+          credentials: "include", // Send cookies
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        }
+      );
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(
@@ -105,9 +108,12 @@ export const requestLogin = (username, password) => {
 export const requestLogout = () => {
   return async (dispatch) => {
     const sendRequest = async () => {
-      const response = await fetch("http://localhost:3000/api/v1/auth/logout", {
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://ticketing-app-j94u.onrender.com//api/v1/auth/logout",
+        {
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         const errorResponse = await response.json();
@@ -144,9 +150,12 @@ export const reauthenticate = createAsyncThunk(
   "auth/reauthenticate",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/me", {
-        credentials: "include", // Send cookies
-      });
+      const response = await fetch(
+        "https://ticketing-app-j94u.onrender.com//api/v1/auth/me",
+        {
+          credentials: "include", // Send cookies
+        }
+      );
 
       if (!response.ok) {
         // Handle non-2xx responses

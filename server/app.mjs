@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["https://ticketing-app-j94u.onrender.com/:5173"],
     credentials: true,
   })
 );

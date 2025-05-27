@@ -1,6 +1,6 @@
 export class ApiClient {
   constructor() {
-    this.baseUrl = "http://localhost:3000";
+    this.baseUrl = "https://ticketing-app-j94u.onrender.com/";
   }
 
   async delete(url, options = {}) {

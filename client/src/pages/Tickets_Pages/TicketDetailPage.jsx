@@ -29,7 +29,7 @@ async function loadTicket(ticketId) {
     });
 
   const response = await fetch(
-    `http://localhost:3000/api/v1/tickets/${ticketId}`
+    `https://ticketing-app-j94u.onrender.com//api/v1/tickets/${ticketId}`
   );
 
   if (!response.ok) {
