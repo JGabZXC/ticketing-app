@@ -115,6 +115,8 @@ export const requestLogout = () => {
         }
       );
 
+      if (response.status === 401) dispatch(authActions.clearAuthState());
+
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(
