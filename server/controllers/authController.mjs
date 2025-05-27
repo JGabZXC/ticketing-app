@@ -11,8 +11,22 @@ import {
   validateConfirmPassword,
 } from "../utils/validate.js";
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: false,
+  expires: new Date(
+    Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+  ),
+  sameSite: "Lax",
+};
+
 export const logout = catchAsync(async (req, res, next) => {
-  res.clearCookie("jwt");
+  res.clearCookie("jwt", cookieOptions);
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.secure = true;
+    cookieOptions.sameSite = "None"; //'None' for cross-site cookies in production
+  }
+
   res.status(200).json({
     status: "success",
     message: "Logged out successfully",
