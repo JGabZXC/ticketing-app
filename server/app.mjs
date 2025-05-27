@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "https://ticketing-app-j94u.onrender.com/:5173",
-      "https://ticketing-app-self.vercel.app/",
+      "https://ticketing-app-self.vercel.app",
     ],
     credentials: true,
   })
