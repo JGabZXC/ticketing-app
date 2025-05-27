@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { uiActions } from "./uiSlice";
+import { redirect } from "react-router-dom";
 
 const initialState = {
-  user: null,
-  isAuthenticated: false,
+  user: localStorage.getItem("user") || null,
+  isAuthenticated: localStorage.getItem("isAuthenticated") === "true",
   loading: false,
 };
 
@@ -14,13 +15,24 @@ const authSlice = createSlice({
     login(state, action) {
       state.user = action.payload.user;
       state.isAuthenticated = true;
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
     },
     logout(state) {
       state.user = null;
       state.isAuthenticated = false;
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("user");
+      redirect("/");
     },
     setLoading(state, action) {
       state.loading = action.payload;
+    },
+    clearAuthState(state) {
+      state.user = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("user");
     },
   },
   extraReducers: (builder) => {
@@ -97,8 +109,6 @@ export const requestLogout = () => {
       const response = await fetch("http://localhost:3000/api/v1/auth/logout", {
         credentials: "include",
       });
-
-      console.log(response);
 
       if (!response.ok) {
         const errorResponse = await response.json();

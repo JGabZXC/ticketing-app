@@ -14,8 +14,8 @@ import TicketNew, { newTicketAction } from "./pages/Tickets_Pages/TicketNew";
 import MyTicket from "./pages/Tickets_Pages/My_Ticket_Pages/MyTicket";
 
 import { action as registerAction } from "./components/Login/Register";
-import { loader as userLoader } from "./pages/Tickets_Pages/TicketNew";
 import { multiPurposeAction } from "./pages/Tickets_Pages/TicketDetailPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -41,9 +41,12 @@ export const router = createBrowserRouter([
           },
           {
             path: "new",
-            element: <TicketNew />,
+            element: (
+              <ProtectedRoute>
+                <TicketNew />
+              </ProtectedRoute>
+            ),
             action: newTicketAction,
-            loader: userLoader,
           },
           {
             path: "myticket/:userId",

@@ -1,6 +1,8 @@
 import { redirect } from "react-router-dom";
 import TicketForm from "../../components/Tickets/TicketForm";
 import { toast } from "react-toastify";
+import store from "../../store/index";
+import { authActions } from "../../store/authSlice";
 
 export default function TicketNew() {
   return <TicketForm />;
@@ -30,32 +32,24 @@ export async function newTicketAction({ request }) {
     return null;
   }
 
+  if (response.status === 401) {
+    store.dispatch(authActions.clearAuthState());
+    toast.error("Token is expired or there is no token. Please log in again.");
+    return redirect("/auth?type=login");
+  }
+
   if (!response.ok) {
-    throw {
-      message: resData.message || "Error creating ticket",
-      status: response.status || 500,
-    };
+    throw new Response(
+      JSON.stringify({
+        message:
+          resData.message || "Failed to create ticket. Please try again.",
+      }),
+      {
+        status: response.status,
+      }
+    );
   }
 
   toast.success("Ticket created successfully");
   return redirect("/tickets", { replace: true });
-}
-
-export async function loader() {
-  const response = await fetch("http://localhost:3000/api/v1/auth/me", {
-    credentials: "include",
-  });
-
-  if (response.status === 401) {
-    return redirect("/auth?type=login", { replace: true });
-  }
-
-  if (!response.ok) {
-    throw {
-      message: "Could not fetch user data",
-      status: response.status || 500,
-    };
-  }
-
-  return null;
 }

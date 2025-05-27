@@ -19,6 +19,7 @@ function handleJsonWebTokenError(err) {
 }
 
 function handleTokenExpiredError(err) {
+  console.log("You are here");
   return new AppError(`Token expired: ${err.message}`, 401);
 }
 
@@ -67,6 +68,8 @@ export default function (err, req, res, next) {
   if (error.name === "MongoServerError" && error.code === 11000) {
     error = handleDuplicateFieldsDB(error);
   }
+
+  console.log(error);
 
   if (process.env.NODE_ENV === "development") return sendErrorDev(error, res);
 
