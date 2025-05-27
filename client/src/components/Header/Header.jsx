@@ -6,9 +6,8 @@ import { useState } from "react";
 
 export default function Header() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu toggle
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   function handleLogout() {
     setIsMenuOpen(false); // Close the menu on logout
@@ -70,20 +69,31 @@ export default function Header() {
               </NavLink>
             </button>
           </li>
-          {isAuthenticated && (
+          {isAuthenticated && user && (
             <li>
-              <button onClick={() => setIsMenuOpen(false)}>
-                <NavLink
-                  to={`/tickets/myticket/${user._id}`}
-                  className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
-                >
-                  My Ticket
-                </NavLink>
-              </button>
+              {user.role === "agent" ? (
+                <button>
+                  <NavLink
+                    to={`/tickets/assignedtickets/${user._id}`}
+                    className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+                  >
+                    Assigned Tickets
+                  </NavLink>
+                </button>
+              ) : (
+                <button onClick={() => setIsMenuOpen(false)}>
+                  <NavLink
+                    to={`/tickets/myticket/${user._id}`}
+                    className="text-slate-600 font-semibold hover:text-slate-800 hover:underline hover:underline-offset-8"
+                  >
+                    My Ticket
+                  </NavLink>
+                </button>
+              )}
             </li>
           )}
           <li>
-            {isAuthenticated ? (
+            {isAuthenticated && user ? (
               <button
                 onClick={handleLogout}
                 type="button"

@@ -8,11 +8,15 @@ import { validateComment } from "../utils/validate.js";
 
 export const getAllTickets = catchAsync(async (req, res, next) => {
   const filter = {};
-  if (req.params.userId) filter.createdBy = req.params.userId;
+  if (req.params.userId) {
+    console.log(req.user.role);
+    if (req.user.role === "agent") filter.assignedTo = req.user._id;
+    else filter.createdBy = req.params.userId;
+  }
   if (req.query.priority && req.query.priority !== "all")
     filter.priority = req.query.priority;
 
-  if (req.user?._id && req.params.userId) {
+  if (req.params.userId) {
     if (req.user._id === req.params.userId)
       return next(
         new AppError("You are not authorized to perform this action", 403)
@@ -81,9 +85,7 @@ export const updateTicket = catchAsync(async (req, res, next) => {
   if (req.body.assignedTo === "null" || req.body.assignedTo === "") {
     req.body.assignedTo = null;
   }
-
   console.log(req.body);
-
   const updatedTicket = await Ticket.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,

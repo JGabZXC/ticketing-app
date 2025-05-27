@@ -2,7 +2,7 @@ import { Link, Form, useSubmit, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function TicketButtons({ totalPages }) {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
   const orderBy = searchParams.get("sort") || "-createdAt";
@@ -32,7 +32,7 @@ export default function TicketButtons({ totalPages }) {
 
   return (
     <div className="max-w-7xl mx-auto flex justify-between items-center mb-4 flex-col lg:flex-row gap-2">
-      {isAuthenticated && (
+      {isAuthenticated && user.role === "user" && (
         <>
           <Link to="/tickets/new">
             <button className="cursor-pointer px-4 py-2 rounded-xl border-2 text-sm lg:text-md bg-indigo-600 text-slate-50 hover:bg-indigo-700 transition-all duration-200">

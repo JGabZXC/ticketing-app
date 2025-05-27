@@ -5,6 +5,7 @@ import Loading from "../../components/Loading/Loading";
 import ErrorTicket from "./ErrorTicket";
 import { ApiClient } from "../../utils/apiClient";
 import { toast } from "react-toastify";
+import { Description } from "@headlessui/react";
 
 export default function TicketDetailPage() {
   const { ticket } = useLoaderData();
@@ -75,11 +76,29 @@ export async function multiPurposeAction({ request, params }) {
 
   if (request.method === "PATCH") {
     console.log("You are here");
-    await http.patch(`/api/v1/tickets/${ticketId}`, {
-      description: formData.get("description"),
-    });
+    let body = {};
+    let message = "";
+    if (formData.get("type") === "assign-to-me") {
+      body = {
+        assignedTo: formData.get("assignedTo"),
+      };
+      message = "This ticket has been assigned to you.";
+    } else if (formData.get("type") === "mark-as") {
+      body = {
+        status: formData.get("status"),
+      };
+      message = `Ticket marked as ${formData.get("status")}`;
+    } else {
+      body = {
+        description: formData.get("description"),
+        title: formData.get("title"),
+      };
+      message = "Ticket updated successfully";
+    }
 
-    toast.success("Ticket updated successfully");
+    await http.patch(`/api/v1/tickets/${ticketId}`, body);
+
+    toast.success(message);
     return redirect(`/tickets/${ticketId}`);
   }
 
@@ -88,7 +107,7 @@ export async function multiPurposeAction({ request, params }) {
       comment: formData.get("comment"),
     });
 
-    if (data.status === "error") {
+    if (data.status === "error" || data.status === 400) {
       toast.error(data.message);
       return null;
     }

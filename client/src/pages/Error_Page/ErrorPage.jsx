@@ -4,9 +4,13 @@ import Header from "../../components/Header/Header";
 
 export default function ErrorPage() {
   const error = useRouteError();
-  console.log(error);
+
   let title = "500 | An error occurred";
-  let message = JSON.parse(error.data)?.message || "Something went wrong!";
+  let message = "Something went wrong!";
+
+  if (error.status === 500)
+    message =
+      JSON.parse(error.data)?.message || "Internal server error occurred.";
 
   if (error.status === 404) {
     title = "404 | Page not found";

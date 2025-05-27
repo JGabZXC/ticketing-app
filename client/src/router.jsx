@@ -16,6 +16,7 @@ import MyTicket from "./pages/Tickets_Pages/My_Ticket_Pages/MyTicket";
 import { action as registerAction } from "./components/Login/Register";
 import { multiPurposeAction } from "./pages/Tickets_Pages/TicketDetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AssignedTickets from "./pages/Tickets_Pages/Assigned_Tickets_Pages/AssignedTickets";
 
 export const router = createBrowserRouter([
   {
@@ -50,7 +51,20 @@ export const router = createBrowserRouter([
           },
           {
             path: "myticket/:userId",
-            element: <MyTicket />,
+            element: (
+              <ProtectedRoute>
+                <MyTicket />
+              </ProtectedRoute>
+            ),
+            loader: ticketsLoader,
+          },
+          {
+            path: "assignedtickets/:userId",
+            element: (
+              <ProtectedRoute>
+                <AssignedTickets />
+              </ProtectedRoute>
+            ),
             loader: ticketsLoader,
           },
         ],

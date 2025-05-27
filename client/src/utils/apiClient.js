@@ -71,6 +71,8 @@ export class ApiClient {
       body: JSON.stringify(body),
     });
 
+    console.log(response.status);
+
     if (response.status === 400) {
       const data = await response.json();
       return {
