@@ -13,7 +13,7 @@ export default function Modal({ isOpen, close, children }) {
         <div className="flex justify-center p-4">
           <DialogPanel
             transition
-            className="w-full max-w-md rounded-xl bg-gray-400 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
+            className="w-full max-w-md rounded-xl bg-slate-50 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
           >
             {children}
           </DialogPanel>

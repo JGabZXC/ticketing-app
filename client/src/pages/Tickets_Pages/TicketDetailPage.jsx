@@ -84,10 +84,14 @@ export async function multiPurposeAction({ request, params }) {
   }
 
   if (request.method === "POST") {
-    console.log("You are here in post");
-    await http.post(`/api/v1/tickets/${ticketId}/comment`, {
+    const data = await http.post(`/api/v1/tickets/${ticketId}/comment`, {
       comment: formData.get("comment"),
     });
+
+    if (data.status === "error") {
+      toast.error(data.message);
+      return null;
+    }
 
     toast.success("Comment added successfully");
     return redirect(`/tickets/${ticketId}`);

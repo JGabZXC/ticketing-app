@@ -71,6 +71,14 @@ export class ApiClient {
       body: JSON.stringify(body),
     });
 
+    if (response.status === 400) {
+      const data = await response.json();
+      return {
+        message: data.message || "Bad request",
+        status: 400,
+      };
+    }
+
     if (!response.ok) {
       const data = await response.json();
       throw new Response(

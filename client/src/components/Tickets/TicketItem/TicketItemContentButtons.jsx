@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { useSubmit, Link } from "react-router-dom";
+import { useSubmit, Link, useNavigation } from "react-router-dom";
 import Modal from "../../Modal/Modal";
 import { useSelector } from "react-redux";
 export default function TicketItemContentButtons({
@@ -20,6 +20,8 @@ export default function TicketItemContentButtons({
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const submit = useSubmit();
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
 
   function openModal() {
     setIsOpen(true);
@@ -29,10 +31,10 @@ export default function TicketItemContentButtons({
     setIsOpen(false);
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     const formData = new FormData();
     formData.append("type", "delete-ticket");
-    submit(formData, {
+    await submit(formData, {
       method: "DELETE",
     });
     setIsOpen(false);
@@ -41,23 +43,25 @@ export default function TicketItemContentButtons({
   return (
     <>
       <Modal isOpen={isOpen} close={closeModal}>
-        <DialogTitle as="h3" className="text-base/7 font-medium text-slate-50">
+        <DialogTitle as="h3" className="text-base/7 font-medium text-slate-600">
           Delete Ticket
         </DialogTitle>
-        <p className="mt-2 text-sm/6 text-slate-100">
+        <p className="mt-2 text-sm/6 text-slate-400">
           Are you sure you want to delete this ticket? This action can not be
           undone.
         </p>
         <div className="flex gap-4 mt-4">
           <Button
-            className="inline-flex items-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-slate-50 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-red-600 data-open:bg-gray-700"
+            className="inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-slate-50 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-red-600 data-open:bg-gray-700"
             onClick={confirmDelete}
+            disabled={isSubmitting}
           >
-            Yes
+            {isSubmitting ? "Deleting..." : "Yes"}
           </Button>
           <Button
-            className="inline-flex items-center gap-2 rounded-md  px-4 py-2 text-sm font-semibold text-slate-50 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-slate-200 data-hover:text-slate-500 data-open:bg-gray-700"
+            className="inline-flex items-center gap-2 rounded-md  px-4 py-2 text-sm font-semibold text-slate-400 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-slate-300 data-hover:text-slate-600 data-open:bg-gray-700"
             onClick={closeModal}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
@@ -106,7 +110,7 @@ export default function TicketItemContentButtons({
                   <div className="py-1">
                     <MenuItem>
                       <button
-                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden w-full text-left"
+                        className="block px-4 py-2 text-sm text-slate-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden w-full text-left"
                         onClick={() => setIsEditing((prevValue) => !prevValue)}
                       >
                         {isEditing ? "Cancel Edit" : "Edit"}
@@ -117,7 +121,7 @@ export default function TicketItemContentButtons({
                     <MenuItem>
                       <button
                         type="button"
-                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden w-full text-left"
+                        className="block px-4 py-2 text-sm text-slate-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden w-full text-left"
                         onClick={openModal}
                       >
                         Delete
