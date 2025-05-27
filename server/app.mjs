@@ -20,7 +20,7 @@ app.use(
     origin: [
       "https://ticketing-app-j94u.onrender.com/:5173",
       "https://ticketing-app-self.vercel.app",
-      "http://localhost:5173/",
+      "http://localhost:5173",
     ],
     credentials: true,
   })
